@@ -25,68 +25,77 @@ const scenes = [
 
 const poses = {
     couple: [
-        { id: 'lean', icon: '💑', name: '侧身依靠' },
-        { id: 'back', icon: '🚶', name: '回眸一笑' },
-        { id: 'hand', icon: '🤝', name: '牵手对视' },
-        { id: 'shoulder', icon: '🫂', name: '搭肩依偎' },
-        { id: 'walk', icon: '🚶‍♀️', name: '并肩漫步' },
-        { id: 'sit', icon: '🪑', name: '坐姿互动' }
+        { id: 'lean', icon: '💑', name: '侧身依靠', advice: '让人物靠在窗边或墙边，身体形成自然斜线' },
+        { id: 'back', icon: '🚶', name: '回眸一笑', advice: '背对镜头走两步，听到提示后自然回头' },
+        { id: 'hand', icon: '🤝', name: '牵手对视', advice: '两人牵手站立，眼神自然交流，不要看镜头' },
+        { id: 'shoulder', icon: '🫂', name: '搭肩依偎', advice: '一方搭肩，身体轻微倾斜，营造亲密感' },
+        { id: 'walk', icon: '🚶‍♀️', name: '并肩漫步', advice: '两人自然并肩走，抓拍动态瞬间' },
+        { id: 'sit', icon: '🪑', name: '坐姿互动', advice: '坐姿时腿往前伸，上半身保持挺拔' }
     ],
     friends: [
-        { id: 'lean', icon: '👯', name: '并排靠肩' },
-        { id: 'back', icon: '🙆', name: '回头比耶' },
-        { id: 'hand', icon: '🤳', name: '对镜自拍' },
-        { id: 'shoulder', icon: '🫂', name: '搂肩大笑' },
-        { id: 'walk', icon: '🚶', name: '牵手走路' },
-        { id: 'sit', icon: '🪑', name: '咖啡桌旁' }
+        { id: 'lean', icon: '👯', name: '并排靠肩', advice: '肩膀轻靠，头部可以一高一低增加层次' },
+        { id: 'back', icon: '🙆', name: '回头比耶', advice: '背对镜头回头，手势自然不僵硬' },
+        { id: 'hand', icon: '🤳', name: '对镜自拍', advice: '两人把手机举高，脸往中间靠拢' },
+        { id: 'shoulder', icon: '🫂', name: '搂肩大笑', advice: '互相搂肩，表情放松大笑' },
+        { id: 'walk', icon: '🚶', name: '牵手走路', advice: '牵手向前走，抓拍背影或侧脸' },
+        { id: 'sit', icon: '🪑', name: '咖啡桌旁', advice: '围坐桌边，利用咖啡杯做道具' }
     ],
     family: [
-        { id: 'lean', icon: '👨‍👩‍👧', name: '亲子依偎' },
-        { id: 'back', icon: '🏃', name: '奔跑回头' },
-        { id: 'hand', icon: '✋', name: '挥手互动' },
-        { id: 'shoulder', icon: '🫂', name: '抱起孩子' },
-        { id: 'walk', icon: '🚶', name: '牵手散步' },
-        { id: 'sit', icon: '🪑', name: '草地坐姿' }
+        { id: 'lean', icon: '👨‍👩‍👧', name: '亲子依偎', advice: '家长侧身半蹲，与孩子保持同一高度' },
+        { id: 'back', icon: '🏃', name: '奔跑回头', advice: '孩子向前跑，听到名字回头，抓拍自然表情' },
+        { id: 'hand', icon: '✋', name: '挥手互动', advice: '孩子向镜头挥手，家长在一旁微笑' },
+        { id: 'shoulder', icon: '🫂', name: '抱起孩子', advice: '抱起时让孩子脸朝向光源' },
+        { id: 'walk', icon: '🚶', name: '牵手散步', advice: '大手牵小手，步伐放慢方便抓拍' },
+        { id: 'sit', icon: '🪑', name: '草地坐姿', advice: '坐在草地上，家长手臂自然环绕孩子' }
     ]
 };
 
 const dialogues = {
     cafe: [
-        '"你靠在那个窗边，头稍微歪一点，对，光线打在脸上很好看。"',
-        '"把咖啡杯举起来，眼神看一下窗外，不要看镜头。"',
-        '"身体往前倾一点，这样显得脸更小，肩膀也自然。"',
-        '"笑一下，想象一下我刚才说的那个梗。"'
+        '你靠在那个窗边，头稍微歪一点，对，光线打在脸上很好看。',
+        '把咖啡杯举起来，眼神看一下窗外，不要看镜头。',
+        '身体往前倾一点，这样显得脸更小，肩膀也自然。',
+        '笑一下，想象一下我刚才说的那个梗。'
     ],
     beach: [
-        '"海风把头发吹起来特别自然，你侧一点脸。"',
-        '"往海边走两步，然后回头看我，不要停。"',
-        '"手轻轻拨一下头发，对，就是那个感觉。"',
-        '"这个光线特别好，保持这个姿势，三二一。"'
+        '海风把头发吹起来特别自然，你侧一点脸。',
+        '往海边走两步，然后回头看我，不要停。',
+        '手轻轻拨一下头发，对，就是那个感觉。',
+        '这个光线特别好，保持这个姿势，三二一。'
     ],
     exhibition: [
-        '"你和那幅画站成对角线，人物放在画面右边。"',
-        '"侧身看画，我抓拍一个自然的眼神。"',
-        '"往前走一步，让头顶留一点空间给天花板。"',
-        '"这个角度很有艺术感，别动，再来一张。"'
+        '你和那幅画站成对角线，人物放在画面右边。',
+        '侧身看画，我抓拍一个自然的眼神。',
+        '往前走一步，让头顶留一点空间给天花板。',
+        '这个角度很有艺术感，别动，再来一张。'
     ],
     park: [
-        '"站在那棵树旁边，人和树形成一个呼应。"',
-        '"你抬头看树叶，我拍一个侧脸轮廓。"',
-        '"坐在长椅边上，腿往前伸，这样会显得腿长。"',
-        '"逆光很美，你稍微转一下头，让光打在脸上。"'
+        '站在那棵树旁边，人和树形成一个呼应。',
+        '你抬头看树叶，我拍一个侧脸轮廓。',
+        '坐在长椅边上，腿往前伸，这样会显得腿长。',
+        '逆光很美，你稍微转一下头，让光打在脸上。'
     ],
     indoor: [
-        '"靠在沙发上，手自然搭在扶手上，放松。"',
-        '"脸转向窗户那边，让自然光打亮半边脸。"',
-        '"眼睛看镜头上方一点，这样显得更有神。"',
-        '"这个居家氛围很好，笑一下就像平时一样。"'
+        '靠在沙发上，手自然搭在扶手上，放松。',
+        '脸转向窗户那边，让自然光打亮半边脸。',
+        '眼睛看镜头上方一点，这样显得更有神。',
+        '这个居家氛围很好，笑一下就像平时一样。'
     ],
     street: [
-        '"你往前走，我喊你的时候再回头。"',
-        '"站在那个招牌下面，人放在画面左边。"',
-        '"手插口袋，肩膀放松，对，很自然。"',
-        '"这个背景虚化会很好看，保持三秒钟。"'
+        '你往前走，我喊你的时候再回头。',
+        '站在那个招牌下面，人放在画面左边。',
+        '手插口袋，肩膀放松，对，很自然。',
+        '这个背景虚化会很好看，保持三秒钟。'
     ]
+};
+
+const focalHints = {
+    cafe: '建议焦段：2x 半身特写',
+    beach: '建议焦段：1x 环境人像',
+    exhibition: '建议焦段：1x 人画互动',
+    park: '建议焦段：2x 半身/特写',
+    indoor: '建议焦段：1.5x 生活感',
+    street: '建议焦段：1x 环境人像'
 };
 
 // 渲染启动页
@@ -116,7 +125,10 @@ function renderModeSelect() {
     return `
         <div class="screen" id="mode">
             <div class="header">
-                <h2>选择拍摄模式</h2>
+                <div class="header-row">
+                    <button class="back-btn" onclick="goToSplash()">&lt;</button>
+                    <h2>选择拍摄模式</h2>
+                </div>
                 <p>PoseCam 会针对不同的关系场景优化引导方式</p>
             </div>
             ${modeButtons}
@@ -137,37 +149,14 @@ function renderSceneSelect() {
     return `
         <div class="screen" id="scene">
             <div class="header">
-                <h2>选择场景</h2>
-                <p>AI 会根据场景推荐最佳姿势和构图</p>
+                <div class="header-row">
+                    <button class="back-btn" onclick="goToMode()">&lt;</button>
+                    <h2>选择场景</h2>
+                </div>
+                <p>AI 会根据当前场景和镜头画面提供专业拍摄指导</p>
             </div>
             <div class="grid">
                 ${sceneGrid}
-            </div>
-            <button class="btn-primary" style="margin-top: auto;" onclick="goToPose()">下一步</button>
-        </div>
-    `;
-}
-
-// 渲染姿势选择
-function renderPoseSelect() {
-    const poseCards = poses[state.mode].map(p => `
-        <div class="template-card ${state.pose === p.id ? 'selected' : ''}" onclick="selectPose('${p.id}')">
-            <span class="pose-icon">${p.icon}</span>
-            <span class="pose-name">${p.name}</span>
-        </div>
-    `).join('');
-
-    return `
-        <div class="screen" id="pose">
-            <div class="header">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-                    <button class="icon-btn" style="background:rgba(255,255,255,0.1);" onclick="goToScene()">←</button>
-                    <h2>选择姿势模板</h2>
-                </div>
-                <p>选择一个参考姿势，拍摄时会有 AR 引导线</p>
-            </div>
-            <div class="template-list">
-                ${poseCards}
             </div>
             <button class="btn-primary" style="margin-top: auto;" onclick="goToViewfinder()">进入取景器</button>
         </div>
@@ -180,6 +169,13 @@ function renderViewfinder() {
     const sceneLabels = { cafe: '咖啡馆', beach: '海边', exhibition: '展览', park: '公园', indoor: '室内', street: '街拍' };
     const dialoguesForScene = dialogues[state.scene];
     const currentDialogue = dialoguesForScene[Math.floor(Math.random() * dialoguesForScene.length)];
+    const currentPose = poses[state.mode].find(p => p.id === state.pose) || poses[state.mode][0];
+    const poseSuggestions = poses[state.mode].map(p => `
+        <div class="pose-chip ${state.pose === p.id ? 'active' : ''}" onclick="selectPose('${p.id}')">
+            <span class="chip-icon">${p.icon}</span>
+            <span class="chip-name">${p.name}</span>
+        </div>
+    `).join('');
 
     return `
         <div class="screen viewfinder" id="viewfinder">
@@ -188,12 +184,25 @@ function renderViewfinder() {
             <div class="pose-overlay"></div>
             
             <div class="top-bar">
-                <button class="icon-btn" onclick="goToPose()">✕</button>
+                <button class="icon-btn back-arrow" onclick="goToScene()">&lt;</button>
                 <div class="mode-tag">${modeLabels[state.mode]} · ${sceneLabels[state.scene]}</div>
                 <button class="icon-btn">⚙️</button>
             </div>
             
-            <div class="focal-hint">建议焦段：2x 半身</div>
+            <div class="focal-hint">${focalHints[state.scene]}</div>
+            
+            <div class="pose-suggestion-panel">
+                <div class="panel-header">
+                    <span class="panel-title">📸 姿势建议</span>
+                    <span class="panel-subtitle">根据场景推荐</span>
+                </div>
+                <div class="pose-chips">
+                    ${poseSuggestions}
+                </div>
+                <div class="pose-advice">
+                    ${currentPose.advice}
+                </div>
+            </div>
             
             <div class="dialogue-box">
                 <div class="label">💬 话术锦囊</div>
@@ -256,7 +265,7 @@ function renderReview() {
 
 // 初始化
 function init() {
-    app.innerHTML = renderSplash() + renderModeSelect() + renderSceneSelect() + renderPoseSelect() + renderViewfinder() + renderReview();
+    app.innerHTML = renderSplash() + renderModeSelect() + renderSceneSelect() + renderViewfinder() + renderReview();
 }
 
 // 导航函数
@@ -265,9 +274,9 @@ function showScreen(id) {
     document.getElementById(id).classList.add('active');
 }
 
+function goToSplash() { showScreen('splash'); }
 function goToMode() { showScreen('mode'); }
 function goToScene() { showScreen('scene'); }
-function goToPose() { renderPoseCards(); showScreen('pose'); }
 function goToViewfinder() { showScreen('viewfinder'); }
 function takePhoto() { showScreen('review'); }
 
@@ -287,15 +296,10 @@ function selectScene(id) {
 
 function selectPose(id) {
     state.pose = id;
-    document.querySelectorAll('#pose .template-card').forEach(card => {
-        card.classList.toggle('selected', card.onclick.toString().includes(id));
-    });
-}
-
-function renderPoseCards() {
-    // 重新渲染姿势选择页面
-    const poseScreen = document.getElementById('pose');
-    poseScreen.outerHTML = renderPoseSelect();
+    // 重新渲染 viewfinder 以更新姿势建议和 AR 轮廓
+    const viewfinder = document.getElementById('viewfinder');
+    viewfinder.outerHTML = renderViewfinder();
+    showScreen('viewfinder');
 }
 
 // 启动

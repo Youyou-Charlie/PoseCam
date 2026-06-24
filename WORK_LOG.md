@@ -50,3 +50,7 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 08:05 UTC
 
 - added back button on pose template selection screen to return to scene selection
+
+## 2026-06-24 08:16 UTC
+
+- refactored prototype: removed separate pose selection screen, added back buttons on all screens, and integrated scene-based pose suggestions inside viewfinder
