@@ -18,3 +18,11 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 04:26 UTC
 
 - committed initial setup; removed temporary PDF screenshots from git and added .kimi/*.png ignore rule
+
+## 2026-06-24 04:35 UTC
+
+- downloaded and installed obra/superpowers skill suite to ~/.kimi/skills/; replaced custom git-superpowers skill with project helper script in .kimi/scripts/commit_log.py
+
+## 2026-06-24 04:35 UTC
+
+- confirmed original markdown content and updated .kimi/references/PDLC_REFERENCE.md with full lifecycle details, including Vibe Coding and prompt engineering sections
