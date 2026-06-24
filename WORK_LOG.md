@@ -54,3 +54,7 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 08:16 UTC
 
 - refactored prototype: removed separate pose selection screen, added back buttons on all screens, and integrated scene-based pose suggestions inside viewfinder
+
+## 2026-06-24 08:43 UTC
+
+- refined viewfinder: replaced pose list with AI photographer guidance panel that combines scene analysis, pose advice, focal length and emotional direction lines
