@@ -34,3 +34,7 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 04:52 UTC
 
 - completed Phase 2 planning: wrote docs/PRD.md and docs/MVP_PLAN.md with feature requirements, tech stack, roadmap and milestones
+
+## 2026-06-24 07:38 UTC
+
+- pushed project to dual remotes: github.com/Youyou-Charlie/PoseCam.git and gitee.com/Youyou-Charlie/pose-cam.git
