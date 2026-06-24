@@ -160,7 +160,10 @@ function renderPoseSelect() {
     return `
         <div class="screen" id="pose">
             <div class="header">
-                <h2>选择姿势模板</h2>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <button class="icon-btn" style="background:rgba(255,255,255,0.1);" onclick="goToScene()">←</button>
+                    <h2>选择姿势模板</h2>
+                </div>
                 <p>选择一个参考姿势，拍摄时会有 AR 引导线</p>
             </div>
             <div class="template-list">

@@ -46,3 +46,7 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 07:56 UTC
 
 - fixed prototype bug: pose screen went black after scene selection due to re-rendering before activating screen
+
+## 2026-06-24 08:05 UTC
+
+- added back button on pose template selection screen to return to scene selection
