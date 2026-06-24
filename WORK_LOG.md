@@ -14,3 +14,7 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 04:25 UTC
 
 - extracted PDLC reference from PDF and saved to .kimi/references/PDLC_REFERENCE.md
+
+## 2026-06-24 04:26 UTC
+
+- committed initial setup; removed temporary PDF screenshots from git and added .kimi/*.png ignore rule
