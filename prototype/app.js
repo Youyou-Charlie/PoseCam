@@ -264,7 +264,7 @@ function showScreen(id) {
 
 function goToMode() { showScreen('mode'); }
 function goToScene() { showScreen('scene'); }
-function goToPose() { showScreen('pose'); renderPoseCards(); }
+function goToPose() { renderPoseCards(); showScreen('pose'); }
 function goToViewfinder() { showScreen('viewfinder'); }
 function takePhoto() { showScreen('review'); }
 

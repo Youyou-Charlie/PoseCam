@@ -42,3 +42,7 @@ This file captures decisions, progress, and next steps so work can survive sessi
 ## 2026-06-24 07:43 UTC
 
 - completed Phase 3 prototype: created clickable HTML prototype in prototype/ simulating full user journey from mode selection to AI review
+
+## 2026-06-24 07:56 UTC
+
+- fixed prototype bug: pose screen went black after scene selection due to re-rendering before activating screen
