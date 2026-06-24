@@ -21,7 +21,7 @@ Pose相机是一款结合摄影知识库与 AI 视觉的人像拍照伴侣工具
 |---|---|---|
 | 灵感构思与市场调研 | ✅ 完成 | `docs/research_report.md` |
 | 产品规划 | ✅ 完成 | `docs/PRD.md`、`docs/MVP_PLAN.md` |
-| 原型设计 | ✅ 完成 | `prototype/index.html`（可点击 HTML 原型） |
+| 原型设计 | ✅ 完成 | `prototype/index.html`（低保真可点击 HTML 原型，仅确认功能流程，非最终 UI） |
 | 开发实现 | ⏳ 待开始 | 暂无 |
 
 ---

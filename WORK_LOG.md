@@ -52,6 +52,7 @@
   - 启动页 → 模式选择 → 场景选择 → 取景器 → AI 点评
   - 取景器包含：构图辅助线、AR 姿势轮廓、焦段建议、AI 摄影师指导面板、话术锦囊
   - 移除姿势列表，改为 AI 摄影师根据场景直接给出 integrated 指导方案
+  - **注意：此原型仅为低保真功能原型，用于验证交互流程和核心功能，UI 视觉设计尚未开始**
 - ✅ 将项目推送到 GitHub 和 Gitee 双仓库。
 
 ---
@@ -97,7 +98,7 @@ Pose相机/
 
 1. 阅读本文件（WORK_LOG.md）了解项目状态。
 2. 阅读 `docs/research_report.md`、`docs/PRD.md`、`docs/MVP_PLAN.md` 了解产品方向。
-3. 打开 `prototype/index.html` 体验当前原型。
+3. 打开 `prototype/index.html` 体验当前低保真原型（仅确认功能流程，非最终 UI）。
 4. 查看当前 git 分支和最近提交：`git log --oneline -10`。
 5. 确认 remote 配置：`git remote -v`（双推策略）。
 6. 推进任务前，优先使用 superpowers skill（如有必要）。
