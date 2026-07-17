@@ -30,7 +30,7 @@ python -m http.server 8000
 设备没有摄像头（如台式机）时，点击「上传视频/图片测试」进入**文件模式**，无需摄像头权限：
 
 - **视频文件**：循环播放并复用实时检测循环，HUD 各项指标（FPS / 单帧耗时 / 人数 / 关键点数）与摄像头模式完全一致，可直接对照达标线判读。
-- **图片文件**：切换 IMAGE 模式做单次检测，canvas 显示原图+骨架叠加；HUD 显示本次检测耗时与关键点数，FPS 一栏显示「静态图」。
+- **图片文件**：切换 IMAGE 模式连续检测 5 次，HUD 显示 **5 次耗时中位数** 与关键点数，FPS 一栏显示「静态图」；长边超过 1280px 的原图会先等比缩放（检测与展示基于缩放后位图，骨架坐标对齐），「输入来源」会注明「已缩放至 1280px」。模型加载后已对 VIDEO / IMAGE 两种模式各做一次小图预热，测量不含推理图重建与 GPU 首次推理的一次性成本。
 - 推荐视频格式 **MP4（H.264）**；MOV（尤其 iPhone 拍摄的 HEVC）在 Windows 版 Chrome 上常无法解码。图片用 JPG / PNG / WebP。
 - HUD 的「输入来源」一栏会标明当前为摄像头 / 文件模式；点「返回重新选择」可回到说明页换模式或换文件（object URL 用完即释放）。
 
@@ -43,7 +43,7 @@ python -m http.server 8000
 | 指标 | 含义 | 通过标准 |
 |---|---|---|
 | FPS | 检测循环帧率（两次成功检测的间隔倒数；图片模式无 FPS，显示「静态图」） | **≥ 24** |
-| 单帧检测耗时 | `detectForVideo` / `detect` 调用前后差值（图片模式为单次 detect 耗时） | **≤ 40 ms** |
+| 单帧检测耗时 | `detectForVideo` / `detect` 调用前后差值（图片模式为 5 次连续 detect 的中位数） | **≤ 40 ms** |
 | 检测到人数 / 关键点数 | 本 Demo 固定 `numPoses: 1`，单人时关键点应为 33 | 稳定为 1 人 / 33 点 |
 | 骨架稳定性 | 连续帧骨架是否剧烈抖动 | 目测：人静止时骨架基本不抖 |
 
@@ -61,6 +61,7 @@ python -m http.server 8000
 | 「未检测到摄像头」 | 设备无摄像头/被禁用/驱动异常；换一个带摄像头的设备测试，或改用「上传视频/图片测试」文件模式。 |
 | 「视频文件无法解码播放」 | 格式/编码不被浏览器支持。改用 MP4（H.264）；MOV（HEVC）在 Windows 版 Chrome 上常无法播放，需先转码。 |
 | 「图片文件无法解码」 | 换用 JPG / PNG / WebP 等常见格式。 |
+| 图片模式耗时上千 ms | 旧版单次测量口径混入了模式切换重建推理图、GPU 首次推理预热、手机原图全尺寸上传三笔一次性/失真成本。更新代码后重测（已加预热 + 长边 1280 缩放 + 5 次中位数），正常应与视频模式同量级（几十 ms）。 |
 | 「摄像头被其他应用占用」 | 关闭视频会议软件、其他占用摄像头的标签页后刷新。 |
 | 「初始化失败」（加载阶段） | CDN / Google 存储下载失败：检查网络与代理（`cdn.jsdelivr.net` 与 `storage.googleapis.com` 均需可达），刷新重试。 |
 | 推理后端显示 CPU | GPU 委托初始化失败（旧显卡/驱动问题）。可更新浏览器与显卡驱动后重试；CPU 模式仅作兜底。 |
@@ -71,7 +72,7 @@ python -m http.server 8000
 - 无构建步骤：`index.html` + `app.js` + `style.css`，共三个文件。`app.js` 以普通脚本加载（模块脚本在 `file://` 下会被浏览器拦截），MediaPipe 库经动态 `import()` 从 CDN 引入；`index.html` 内联兜底脚本会在 `file://` 直开或 `app.js` 加载失败时显示横幅提示。
 - 库：`@mediapipe/tasks-vision@0.10.14`，jsdelivr CDN（`vision_bundle.mjs` 与 `wasm/` 目录同版本）。
 - 模型：PoseLandmarker `pose_landmarker_full`（Google 官方托管，float16）。
-- 推理：`runningMode: "VIDEO"`，`numPoses: 1`，GPU 优先、CPU 兜底；`detectForVideo` 时间戳严格单调递增，重复帧跳过；图片模式经 `setOptions({ runningMode: "IMAGE" })` 切换后调 `detect()`，测完切回 VIDEO。
-- 文件模式：`URL.createObjectURL` 作为 video/img 源（视频 muted + loop），object URL 用完即 `revokeObjectURL` 释放；「返回重新选择」可回到说明页，摄像头按钮保留可用。
+- 推理：`runningMode: "VIDEO"`，`numPoses: 1`，GPU 优先、CPU 兜底；`detectForVideo` 时间戳严格单调递增，重复帧跳过；图片模式经 `setOptions({ runningMode: "IMAGE" })` 切换后连续 `detect()` 5 次取中位数，测完切回 VIDEO；模型加载后用 224×224 临时 canvas 对两种模式各预热一次（失败仅警告，不阻断）。
+- 文件模式：`URL.createObjectURL` 作为 video/img 源（视频 muted + loop），object URL 用完即 `revokeObjectURL` 释放；图片长边超 1280px 先等比缩放再检测与展示；「返回重新选择」可回到说明页，摄像头按钮保留可用。
 - 渲染：canvas 与视频同尺寸叠加，`DrawingUtils.drawConnectors(POSE_CONNECTIONS)` 画骨架、`drawLandmarks` 画关键点，主色 `#00D4AA`；画面做自拍镜像（video 与 canvas 同一变换，骨架仍严格对齐）。
 - 所有视频帧仅在本地浏览器内处理，不上传任何数据。

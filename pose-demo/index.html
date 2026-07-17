@@ -36,6 +36,7 @@
       <p class="note">
         没有摄像头？用「上传视频/图片测试」进入<strong>文件模式</strong>：验证的是「算力核心」——识别速度与准确性；
         端到端实时管道（采集 → 检测 → 渲染的完整链路）仍需摄像头模式验证。视频推荐 MP4（H.264）。
+        图片模式会将长边超过 1280px 的原图先等比缩放，耗时取连续 5 次检测的中位数（已剔除模式切换与预热等一次性成本）。
       </p>
       <p id="status-line" class="status-line" aria-live="polite"></p>
       <div id="error-box" class="error-box" hidden>

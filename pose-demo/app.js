@@ -26,6 +26,9 @@ const PASS_FPS = 24;
 const PASS_MS = 40;
 // 滑动平均窗口（帧）
 const AVG_WINDOW = 30;
+// 图片模式测量口径：长边上限、连续检测次数（取中位数）
+const IMAGE_MAX_EDGE = 1280;
+const IMAGE_DETECT_RUNS = 5;
 
 // ---------- DOM ----------
 
@@ -209,6 +212,35 @@ async function ensureLandmarker() {
   poseLandmarker = landmarker;
   mBackend.textContent = delegate;
   if (delegate === "CPU") backendNote.hidden = false;
+
+  setStatus("模型就绪，正在预热推理管道…");
+  await warmupLandmarker();
+}
+
+// 预热：用小尺寸位图把 VIDEO / IMAGE 两种模式各跑一次，
+// 让推理图重建与 GPU 首次推理等一次性成本不混入后续真实测量。
+// 预热失败不阻断流程（首次测量可能偏大，仅警告）。
+async function warmupLandmarker() {
+  try {
+    const warmupCanvas = document.createElement("canvas");
+    warmupCanvas.width = 224;
+    warmupCanvas.height = 224;
+    const wctx = warmupCanvas.getContext("2d");
+    wctx.fillStyle = "#808080";
+    wctx.fillRect(0, 0, 224, 224);
+
+    // VIDEO 模式预热（detectForVideo 接受 canvas 作为 ImageSource，时间戳合法即可）
+    poseLandmarker.detectForVideo(warmupCanvas, performance.now());
+    // IMAGE 模式预热；无论成功与否都切回 VIDEO，避免卡在 IMAGE 模式
+    await poseLandmarker.setOptions({ runningMode: "IMAGE" });
+    try {
+      poseLandmarker.detect(warmupCanvas);
+    } finally {
+      await poseLandmarker.setOptions({ runningMode: "VIDEO" });
+    }
+  } catch (err) {
+    console.warn("预热失败（不影响流程，首次测量可能含一次性成本）：", err);
+  }
 }
 
 // ---------- 通用工具 ----------
@@ -331,7 +363,7 @@ async function startVideoFile(file) {
   requestAnimationFrame(detectLoop);
 }
 
-// 图片文件：切 IMAGE 模式单次 detect()，测完切回 VIDEO
+// 图片文件：切 IMAGE 模式连续 detect 5 次取中位数，测完切回 VIDEO
 async function startImageFile(file) {
   errorBox.hidden = true;
   await ensureLandmarker();
@@ -348,32 +380,58 @@ async function startImageFile(file) {
     img.src = url;
   });
 
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
+  // 长边超过 1280px 时先等比缩放：手机原图（3000-4000px）全尺寸上传 GPU
+  // 是一笔失真成本，不代表实时管道中的实际输入规格
+  let source = img;
+  let srcWidth = img.naturalWidth;
+  let srcHeight = img.naturalHeight;
+  const longEdge = Math.max(srcWidth, srcHeight);
+  const wasScaled = longEdge > IMAGE_MAX_EDGE;
+  if (wasScaled) {
+    const scale = IMAGE_MAX_EDGE / longEdge;
+    srcWidth = Math.round(srcWidth * scale);
+    srcHeight = Math.round(srcHeight * scale);
+    const scaled = document.createElement("canvas");
+    scaled.width = srcWidth;
+    scaled.height = srcHeight;
+    scaled.getContext("2d").drawImage(img, 0, 0, srcWidth, srcHeight);
+    source = scaled;
+  }
+
+  canvas.width = srcWidth;
+  canvas.height = srcHeight;
   if (!drawingUtils) drawingUtils = new DrawingUtilsRef(canvas.getContext("2d"));
 
+  // 连续检测 5 次取中位数：首次 detect 仍可能含模式切换的推理图重建，
+  // 中位数可把这类一次性波动剔掉
   await poseLandmarker.setOptions({ runningMode: "IMAGE" });
+  const samples = [];
   let result;
-  let elapsed;
   try {
-    const t0 = performance.now();
-    result = poseLandmarker.detect(img);
-    elapsed = performance.now() - t0;
+    for (let i = 0; i < IMAGE_DETECT_RUNS; i++) {
+      const t0 = performance.now();
+      result = poseLandmarker.detect(source);
+      samples.push(performance.now() - t0);
+    }
   } finally {
     // 无论成功与否都切回 VIDEO，保证后续摄像头/视频模式可用
     await poseLandmarker.setOptions({ runningMode: "VIDEO" });
   }
+  samples.sort((a, b) => a - b);
+  const median = samples[Math.floor(samples.length / 2)];
 
-  // canvas 上先画原图，再叠加骨架
+  // canvas 上画检测所用的同一张位图（缩放后为缩放图），骨架坐标自然对齐
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
   drawPoses(result);
   releaseObjectUrl(); // 图片已解码绘制完毕，object URL 用完释放
 
   videoWrap.classList.add("image-mode");
-  mMode.textContent = "文件模式 · 图片";
+  mMode.textContent = wasScaled
+    ? `文件模式 · 图片（已缩放至 ${IMAGE_MAX_EDGE}px）`
+    : "文件模式 · 图片";
   enterStage("image-file");
-  updateHudForImage(result, elapsed);
+  updateHudForImage(result, median);
 }
 
 // ---------- 返回说明页 ----------
@@ -495,15 +553,15 @@ function updateHud(result) {
   setCounts(result);
 }
 
-// 静态图：单次结果，FPS 无意义
-function updateHudForImage(result, elapsed) {
+// 静态图：显示 5 次连续检测的中位数，FPS 无意义
+function updateHudForImage(result, medianMs) {
   mFps.textContent = "静态图";
   mFps.className = "stat-value";
-  setJudge(mMs, elapsed.toFixed(1) + " ms", elapsed <= PASS_MS, "达标", "未达标");
+  setJudge(mMs, medianMs.toFixed(1) + " ms", medianMs <= PASS_MS, "达标", "未达标");
   mFpsJudge.textContent = "—";
   mFpsJudge.className = "";
-  mMsJudge.textContent = elapsed <= PASS_MS ? "达标" : "未达标";
-  mMsJudge.className = elapsed <= PASS_MS ? "ok" : "bad";
+  mMsJudge.textContent = (medianMs <= PASS_MS ? "达标" : "未达标") + " · 5 次中位数";
+  mMsJudge.className = medianMs <= PASS_MS ? "ok" : "bad";
 
   setCounts(result);
 }
