@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PoseCam · 姿势识别技术验证 Demo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <h1>PoseCam · 姿势识别技术验证</h1>
+      <p class="subtitle">MediaPipe PoseLandmarker · 浏览器实时骨架检测 · 验证「识别能力」是否足够快、足够稳</p>
+    </header>
+
+    <!-- 说明页：启动前显示 -->
+    <section id="setup-panel" class="panel">
+      <h2>验证目标</h2>
+      <p>
+        本 Demo 验证 PoseCam 最危险的技术假设：<strong>实时姿势识别能否在普通设备的浏览器里跑到产品可用的速度与稳定性</strong>。
+        开启摄像头后，画面将实时叠加 33 个身体关键点与骨架连线，右上角 HUD 实时显示性能指标。
+      </p>
+      <div class="criteria">
+        <span class="badge">通过标准：FPS ≥ 24</span>
+        <span class="badge">单帧检测耗时 ≤ 40 ms</span>
+        <span class="badge">骨架连续帧无明显抖动（目测）</span>
+      </div>
+      <p class="note">
+        需要摄像头权限；画面仅在本地浏览器内处理，不上传任何数据。首次加载需联网下载模型与运行时（约 12&nbsp;MB）。
+      </p>
+      <button id="start-btn" type="button">开启摄像头</button>
+      <p id="status-line" class="status-line" aria-live="polite"></p>
+      <div id="error-box" class="error-box" hidden>
+        <h3 id="error-title"></h3>
+        <p id="error-detail"></p>
+      </div>
+    </section>
+
+    <!-- 取景 + 叠加层 -->
+    <section id="stage" class="stage" hidden>
+      <div class="video-wrap">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+      </div>
+
+      <!-- 指标 HUD -->
+      <div id="hud" class="hud">
+        <div class="stat">
+          <span class="stat-label">FPS（检测循环）</span>
+          <span id="m-fps" class="stat-value">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">单帧检测耗时</span>
+          <span id="m-ms" class="stat-value">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">检测到人数</span>
+          <span id="m-persons" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">关键点数</span>
+          <span id="m-keypoints" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">推理后端</span>
+          <span id="m-backend" class="stat-value">--</span>
+        </div>
+        <p id="backend-note" class="backend-note" hidden>⚠ GPU 初始化失败，已回退 CPU 推理，性能可能明显下降。</p>
+        <p class="hud-criteria">达标线：FPS ≥ 24（<span id="m-fps-judge">--</span>） · 单帧 ≤ 40 ms（<span id="m-ms-judge">--</span>）</p>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <p>技术栈：@mediapipe/tasks-vision 0.10.14（CDN） · pose_landmarker_full · 无构建步骤</p>
+    </footer>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

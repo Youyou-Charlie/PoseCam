@@ -41,7 +41,8 @@
 - ✅ 拍板视觉方向：**方案 A（专业科技风）为全局基调 + 话术锦囊模块融合方案 B（聊天泡泡 + 珊瑚橙暖色）**，理由与否决记录见设计规格文档。
 - ✅ 确定交付路线调整：以 HTML/CSS 高保真视觉原型替代 Figma 稿先行，并新增浏览器姿势识别技术验证 demo（验证 CV 核心可行性这一最大风险）。
 - ✅ 输出设计规格：`docs/superpowers/specs/2026-07-17-hifi-prototype-and-pose-demo-design.md`（含设计 tokens、页面规格、demo 技术方案与验证指标）。
-- 🔄 构建中：`prototype-hifi/` 高保真视觉原型、`pose-demo/` 姿势识别验证 demo。
+- ✅ 构建完成 `prototype-hifi/` 高保真视觉原型（5 屏，A+B 融合视觉，纯前端无依赖，file:// 直开可运行）。
+- ✅ 构建完成 `pose-demo/` 姿势识别验证 demo（MediaPipe PoseLandmarker，FPS/单帧耗时/骨架实时显示，通过标准 FPS≥24、≤40ms；真实浏览器效果待用户实测验收）。
 
 ### 2026-06-25
 
@@ -83,9 +84,9 @@
 
 当前处于「Agent 自主推进」阶段（用户全权委托，保留否决权）：
 
-1. 🔄 **构建高保真视觉原型 `prototype-hifi/`**：按 2026-07-17 设计规格的 tokens 与 5 屏清单实施。
-2. 🔄 **构建姿势识别验证 demo `pose-demo/`**：MediaPipe PoseLandmarker，验证 FPS / 单帧耗时 / 骨架稳定性。
-3. **用户评审**：体验原型与 demo，收集修改意见。
+1. ✅ **高保真视觉原型 `prototype-hifi/`**：已交付（双击 `prototype-hifi/index.html` 即可体验）。
+2. ✅ **姿势识别验证 demo `pose-demo/`**：已交付（在 `pose-demo/` 起 HTTP 服务后访问，步骤见其中 README）。
+3. 👉 **用户评审（当前阻塞点）**：体验原型与 demo 并反馈意见；pose demo 的 FPS/耗时需真机实测确认是否达标。
 4. **输出正式 Figma 设计稿规格**：基于评审确认后的视觉系统。
 5. **制定可用性测试计划**：测试脚本、招募渠道、反馈收集方式。
 6. （后续，需 Mac + Xcode）**技术脚手架**：创建 SwiftUI + ARKit + Vision 项目。
@@ -103,10 +104,19 @@ Pose相机/
 │   ├── research_report.md             # 市场调研报告
 │   ├── PRD.md                         # 产品需求文档
 │   └── MVP_PLAN.md                    # MVP 规划与里程碑
-├── prototype/                         # 可点击 HTML 原型
+├── prototype/                         # 可点击 HTML 原型（低保真，流程对照）
 │   ├── index.html
 │   ├── style.css
 │   └── app.js
+├── prototype-hifi/                    # 高保真视觉原型（2026-07-17，A+B 融合视觉）
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+├── pose-demo/                         # 姿势识别技术验证 demo（2026-07-17，MediaPipe）
+│   ├── index.html
+│   ├── app.js
+│   ├── style.css
+│   └── README.md
 ├── .kimi/
 │   ├── references/
 │   │   └── PDLC_REFERENCE.md          # 产品开发生命周期参考
@@ -114,7 +124,8 @@ Pose相机/
 │       └── commit_log.py              # 工作日志辅助脚本
 ├── docs/superpowers/
 │   └── specs/
-│       └── 2026-06-25-ui-design-direction-draft.md  # UI 视觉方向草案
+│       ├── 2026-06-25-ui-design-direction-draft.md        # UI 视觉方向草案（已确认）
+│       └── 2026-07-17-hifi-prototype-and-pose-demo-design.md  # 高保真原型+demo 设计规格
 └── .gitignore
 ```
 

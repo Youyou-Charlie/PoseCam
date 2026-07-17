@@ -1,0 +1,231 @@
+/* PoseCam 姿势识别验证 Demo —— 深色简洁风格（内部工具从简） */
+
+:root {
+  --bg: #0A0A0F;
+  --panel: #12141C;
+  --accent: #00D4AA;
+  --text: #F5F5F0;
+  --text-dim: #8E8E93;
+  --ok: #34C759;
+  --bad: #FF453A;
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  line-height: 1.6;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.page-header h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* ---------- 说明页 ---------- */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  padding: 24px 28px 28px;
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.panel p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.criteria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.note {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+#start-btn {
+  margin-top: 16px;
+  padding: 12px 36px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #04110D;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+#start-btn:hover:not(:disabled) {
+  transform: scale(1.03);
+}
+
+#start-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.status-line {
+  margin-top: 12px;
+  min-height: 1.4em;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.error-box {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border: 1px solid var(--bad);
+  border-radius: 12px;
+  background: rgba(255, 69, 58, 0.08);
+}
+
+.error-box h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--bad);
+}
+
+.error-box p {
+  margin: 0;
+  font-size: 13px;
+  white-space: pre-line;
+}
+
+/* ---------- 取景 + 叠加 ---------- */
+
+.video-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.video-wrap video,
+.video-wrap canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* 自拍镜像：video 与 canvas 施加同一变换，骨架仍与画面严格对齐 */
+  transform: scaleX(-1);
+}
+
+.video-wrap canvas {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+
+/* ---------- HUD ---------- */
+
+.hud {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.stat {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-value.ok {
+  color: var(--ok);
+}
+
+.stat-value.bad {
+  color: var(--bad);
+}
+
+.backend-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--bad);
+  border-radius: 12px;
+  background: rgba(255, 69, 58, 0.08);
+  color: var(--bad);
+  font-size: 13px;
+}
+
+.hud-criteria {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.hud-criteria .ok {
+  color: var(--ok);
+}
+
+.hud-criteria .bad {
+  color: var(--bad);
+}
+
+/* ---------- 页脚 ---------- */
+
+.page-footer {
+  margin-top: 24px;
+  color: var(--text-dim);
+  font-size: 12px;
+}

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoseCam · 高保真视觉原型</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+
+    <!-- ========== 屏 1 · 启动页 ========== -->
+    <section class="screen splash active" id="screen-splash">
+      <div class="splash-glow"></div>
+      <div class="splash-inner">
+        <div class="brand-mark">
+          <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M10 24v-8a6 6 0 0 1 6-6h8" stroke="#00D4AA" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M40 10h8a6 6 0 0 1 6 6v8" stroke="#00D4AA" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M54 40v8a6 6 0 0 1-6 6h-8" stroke="#00D4AA" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M24 54h-8a6 6 0 0 1-6-6v-8" stroke="#00D4AA" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="32" cy="32" r="11" stroke="#00D4AA" stroke-width="3.5"/>
+            <circle cx="32" cy="32" r="4" fill="#00D4AA"/>
+          </svg>
+        </div>
+        <h1 class="brand-name">PoseCam</h1>
+        <p class="brand-tag">你的随身 AI 摄影师<br>让每一次快门，都恰好心动</p>
+        <button class="btn-pill btn-primary" id="btn-enter">开始拍摄</button>
+        <p class="splash-hint">点击任意处进入</p>
+      </div>
+    </section>
+
+    <!-- ========== 屏 2 · 模式选择 ========== -->
+    <section class="screen" id="screen-mode">
+      <header class="page-head">
+        <div class="head-row">
+          <button class="btn-back" data-go="screen-splash" aria-label="返回">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <h2>今天怎么拍？</h2>
+        </div>
+        <p class="head-sub">选择拍摄模式，AI 摄影师将全程陪同引导</p>
+      </header>
+
+      <div class="mode-grid">
+        <button class="mode-card selected" data-mode="ta">
+          <span class="mode-check">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="mode-icon">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="15" r="7" stroke="#00D4AA" stroke-width="3"/>
+              <path d="M10 40c1.5-8 6.5-12 14-12s12.5 4 14 12" stroke="#00D4AA" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="mode-title">帮 TA 拍</span>
+          <span class="mode-desc">实时构图与姿势引导<br>随手拍出氛围感</span>
+        </button>
+
+        <button class="mode-card" data-mode="us">
+          <span class="mode-check">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="mode-icon">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="17" cy="16" r="6" stroke="#00D4AA" stroke-width="3"/>
+              <circle cx="32" cy="16" r="6" stroke="#00D4AA" stroke-width="3"/>
+              <path d="M5 40c1.2-7 5.4-10.5 12-10.5 3 0 5.6.8 7.5 2.3 1.9-1.5 4.5-2.3 7.5-2.3 6.6 0 10.8 3.5 12 10.5" stroke="#00D4AA" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="mode-title">我们合照</span>
+          <span class="mode-desc">双人同框姿势引导<br>记录并肩的时刻</span>
+        </button>
+      </div>
+
+      <div class="page-foot">
+        <button class="btn-pill btn-primary" data-go="screen-scene">下一步</button>
+      </div>
+    </section>
+
+    <!-- ========== 屏 3 · 场景选择 ========== -->
+    <section class="screen" id="screen-scene">
+      <header class="page-head">
+        <div class="head-row">
+          <button class="btn-back" data-go="screen-mode" aria-label="返回">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <h2>选一个约会场景</h2>
+        </div>
+        <p class="head-sub">AI 将按场景推荐焦段、姿势与话术</p>
+      </header>
+
+      <div class="scene-list">
+        <button class="scene-card selected" data-scene="cafe">
+          <span class="scene-thumb thumb-cafe"></span>
+          <span class="scene-info">
+            <span class="scene-name">咖啡厅</span>
+            <span class="scene-desc">窗边暖光 · 氛围感首选</span>
+          </span>
+          <span class="scene-check">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <button class="scene-card" data-scene="street">
+          <span class="scene-thumb thumb-street"></span>
+          <span class="scene-info">
+            <span class="scene-name">街拍</span>
+            <span class="scene-desc">城市线条 · 随性松弛感</span>
+          </span>
+          <span class="scene-check">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <button class="scene-card" data-scene="night">
+          <span class="scene-thumb thumb-night"></span>
+          <span class="scene-info">
+            <span class="scene-name">夜景</span>
+            <span class="scene-desc">霓虹光斑 · 电影感拉满</span>
+          </span>
+          <span class="scene-check">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <button class="scene-card" data-scene="indoor">
+          <span class="scene-thumb thumb-indoor"></span>
+          <span class="scene-info">
+            <span class="scene-name">室内</span>
+            <span class="scene-desc">居家日常 · 自然生活感</span>
+          </span>
+          <span class="scene-check">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+      </div>
+
+      <div class="page-foot">
+        <button class="btn-pill btn-primary" id="btn-to-vf">进入取景器</button>
+      </div>
+    </section>
+
+    <!-- ========== 屏 4 · 取景器（核心屏） ========== -->
+    <section class="screen vf" id="screen-viewfinder">
+      <!-- 模拟取景画面（CSS 渐变） -->
+      <div class="vf-scene thumb-cafe" id="vf-scene"></div>
+      <div class="vf-vignette"></div>
+
+      <!-- AR 姿势引导轮廓 · 单人 -->
+      <svg class="ar-outline" id="ar-solo" viewBox="0 0 200 300" fill="none" aria-hidden="true">
+        <g class="ar-ok">
+          <circle cx="100" cy="46" r="26"/>
+          <path d="M74 88 Q100 78 126 88 Q133 126 124 166 Q100 178 76 166 Q67 126 74 88 Z"/>
+          <path d="M74 92 Q57 108 54 136 Q52 158 61 174"/>
+          <path d="M80 172 Q76 224 79 276"/>
+          <path d="M120 172 Q124 224 121 276"/>
+          <path d="M79 276 Q72 283 65 280"/>
+          <path d="M121 276 Q128 283 135 280"/>
+        </g>
+        <g class="ar-miss">
+          <path d="M126 92 Q148 96 154 76 Q158 58 146 48"/>
+        </g>
+      </svg>
+
+      <!-- AR 姿势引导轮廓 · 双人 -->
+      <svg class="ar-outline ar-couple" id="ar-couple" viewBox="0 0 280 300" fill="none" hidden aria-hidden="true">
+        <g class="ar-ok">
+          <circle cx="92" cy="54" r="25"/>
+          <path d="M70 92 Q92 83 114 92 Q120 128 112 164 Q92 174 72 164 Q64 128 70 92 Z"/>
+          <path d="M112 96 Q140 88 168 98"/>
+          <path d="M76 170 Q73 222 76 272"/>
+          <path d="M108 170 Q111 222 108 272"/>
+          <circle cx="188" cy="58" r="23"/>
+          <path d="M168 96 Q188 88 208 96 Q214 130 206 164 Q188 172 170 164 Q162 130 168 96 Z"/>
+          <path d="M174 168 Q171 220 174 270"/>
+          <path d="M202 168 Q205 220 202 270"/>
+        </g>
+        <g class="ar-miss">
+          <path d="M208 100 Q226 118 228 146 Q229 162 222 172"/>
+        </g>
+      </svg>
+
+      <!-- 未匹配部位提示 -->
+      <div class="ar-tag" id="ar-tag"><span class="ar-tag-dot"></span>右臂再抬高一点</div>
+
+      <!-- 顶部栏 -->
+      <div class="vf-top">
+        <button class="btn-glass-circle" data-go="screen-scene" aria-label="返回">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="focal-pill" id="focal-pill">建议焦段 2x · 半身特写</div>
+        <span class="vf-top-spacer"></span>
+      </div>
+
+      <!-- AI 摄影师指导面板 -->
+      <div class="ai-panel">
+        <div class="ai-head">
+          <span class="ai-badge">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4L12 3z" fill="#00D4AA"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9L18 15z" fill="#00D4AA" opacity=".7"/></svg>
+            AI 摄影师
+          </span>
+          <span class="ai-scene" id="ai-scene">咖啡厅 · 帮 TA 拍</span>
+          <button class="ai-refresh" id="btn-next-advice" aria-label="换一条建议">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 3.5V8h-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="ai-pose" id="ai-pose">侧身靠窗</div>
+        <div class="ai-tip" id="ai-tip">让 TA 侧对窗户，脸转向光源，轮廓会更柔和。跟随红色引导线，右臂再抬高一点。</div>
+      </div>
+
+      <!-- 话术锦囊入口（暖色唯一入口） -->
+      <button class="fab-coral" id="btn-lines" aria-label="话术锦囊">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 4c-4.7 0-8.5 3-8.5 6.7 0 2.1 1.2 4 3 5.2L5.7 19.5l4.2-1.7c.7.2 1.4.3 2.1.3 4.7 0 8.5-3 8.5-6.7S16.7 4 12 4z" fill="#fff"/>
+          <circle cx="8.8" cy="10.7" r="1.05" fill="#FF7E67"/>
+          <circle cx="12" cy="10.7" r="1.05" fill="#FF7E67"/>
+          <circle cx="15.2" cy="10.7" r="1.05" fill="#FF7E67"/>
+        </svg>
+        <span class="fab-label">话术锦囊</span>
+      </button>
+
+      <!-- 底部快门区 -->
+      <div class="vf-bottom">
+        <div class="shutter-row">
+          <button class="thumb-mini thumb-cafe" id="thumb-mini" aria-label="上一张"></button>
+          <button class="shutter" id="btn-shutter" aria-label="快门"></button>
+          <button class="btn-glass-circle" id="btn-flip" aria-label="翻转镜头">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 8a7 7 0 0 1 11.5-2.5M17 16a7 7 0 0 1-11.5 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 2.5v3.5h-3.5M5 21.5V18h3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 拍照闪白 -->
+      <div class="flash" id="flash"></div>
+
+      <!-- 话术锦囊面板 -->
+      <div class="scrim" id="scrim" hidden></div>
+      <div class="lines-sheet" id="lines-sheet">
+        <div class="sheet-head">
+          <div class="sheet-title-wrap">
+            <span class="sheet-title">话术锦囊</span>
+            <span class="sheet-sub">照着说就好，情绪价值拉满</span>
+          </div>
+          <button class="sheet-close" id="btn-sheet-close" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="bubbles" id="bubbles"></div>
+        <button class="sheet-refresh" id="btn-more-lines">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 3.5V8h-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          换几句
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== 屏 5 · AI 点评 ========== -->
+    <section class="screen" id="screen-review">
+      <header class="page-head">
+        <div class="head-row">
+          <button class="btn-back" data-go="screen-viewfinder" aria-label="返回">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <h2>AI 拍摄点评</h2>
+        </div>
+        <p class="head-sub" id="review-sub">咖啡厅 · 帮 TA 拍</p>
+      </header>
+
+      <div class="review-photo thumb-cafe" id="review-photo">
+        <div class="score-chip">
+          <span class="score-num">8.6</span>
+          <span class="score-label">AI 综合评分</span>
+        </div>
+      </div>
+
+      <div class="fb-list">
+        <div class="fb-item">
+          <span class="fb-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="#00D4AA" stroke-width="2" stroke-linejoin="round"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16" stroke="#00D4AA" stroke-width="1.4"/></svg>
+          </span>
+          <span class="fb-body">
+            <span class="fb-title">构图<span class="stars">★★★★<i>★</i></span></span>
+            <span class="fb-text">人物落在右侧三分线，头顶留白舒适，构图很稳。</span>
+          </span>
+        </div>
+        <div class="fb-item">
+          <span class="fb-icon">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6.5" r="3" stroke="#00D4AA" stroke-width="2"/><path d="M5.5 20c.8-4.5 3.2-6.5 6.5-6.5s5.7 2 6.5 6.5" stroke="#00D4AA" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+          <span class="fb-body">
+            <span class="fb-title">姿势<span class="stars">★★★<i>★★</i></span></span>
+            <span class="fb-text">右臂线条略僵，下次再放松一点会更自然。</span>
+          </span>
+        </div>
+        <div class="fb-item">
+          <span class="fb-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.3-7-9.5C5 7.5 7 6 9 6c1.3 0 2.4.7 3 1.7C12.6 6.7 13.7 6 15 6c2 0 4 1.5 4 4.5 0 5.2-7 9.5-7 9.5z" stroke="#00D4AA" stroke-width="2" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="fb-body">
+            <span class="fb-title">情绪<span class="stars">★★★★★</span></span>
+            <span class="fb-text">笑容自然有感染力，这张的情绪价值拉满。</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="page-foot foot-row">
+        <button class="btn-pill btn-ghost" data-go="screen-viewfinder">再拍一张</button>
+        <button class="btn-pill btn-primary" id="btn-save">保存照片</button>
+      </div>
+    </section>
+
+    <!-- iOS 状态栏（模拟） -->
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <svg viewBox="0 0 20 14" fill="none"><rect x="0" y="9" width="3" height="5" rx="1" fill="#F5F5F0"/><rect x="5" y="6" width="3" height="8" rx="1" fill="#F5F5F0"/><rect x="10" y="3" width="3" height="11" rx="1" fill="#F5F5F0"/><rect x="15" y="0" width="3" height="14" rx="1" fill="#F5F5F0"/></svg>
+        <svg viewBox="0 0 18 14" fill="none"><path d="M9 12.5a1.6 1.6 0 1 0 0-3.2 1.6 1.6 0 0 0 0 3.2z" fill="#F5F5F0"/><path d="M4.8 8.3a6.2 6.2 0 0 1 8.4 0M2 5.4a10 10 0 0 1 14 0" stroke="#F5F5F0" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 26 14" fill="none"><rect x="0.8" y="0.8" width="20" height="12.4" rx="3.5" stroke="#F5F5F0" stroke-opacity=".5" stroke-width="1.2"/><rect x="2.8" y="2.8" width="13" height="8.4" rx="1.8" fill="#F5F5F0"/><path d="M23.5 4.8v4.4a2.4 2.4 0 0 0 0-4.4z" fill="#F5F5F0" fill-opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <!-- 全局 Toast -->
+    <div class="toast" id="toast"></div>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
