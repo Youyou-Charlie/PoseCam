@@ -43,6 +43,7 @@
 - ✅ 输出设计规格：`docs/superpowers/specs/2026-07-17-hifi-prototype-and-pose-demo-design.md`（含设计 tokens、页面规格、demo 技术方案与验证指标）。
 - ✅ 构建完成 `prototype-hifi/` 高保真视觉原型（5 屏，A+B 融合视觉，纯前端无依赖，file:// 直开可运行）。
 - ✅ 构建完成 `pose-demo/` 姿势识别验证 demo（MediaPipe PoseLandmarker，FPS/单帧耗时/骨架实时显示，通过标准 FPS≥24、≤40ms；真实浏览器效果待用户实测验收）。
+- ✅ pose-demo 增加「文件回退模式」（用户台式机无摄像头）：上传视频/图片即可验证算力核心（识别速度+准确性），实时管道待回家用笔记本摄像头模式补验。
 
 ### 2026-06-25
 

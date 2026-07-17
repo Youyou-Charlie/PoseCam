@@ -28,7 +28,15 @@
       <p class="note">
         需要摄像头权限；画面仅在本地浏览器内处理，不上传任何数据。首次加载需联网下载模型与运行时（约 12&nbsp;MB）。
       </p>
-      <button id="start-btn" type="button">开启摄像头</button>
+      <div class="button-row">
+        <button id="start-btn" type="button">开启摄像头</button>
+        <button id="file-btn" type="button" class="btn-secondary">上传视频/图片测试</button>
+        <input id="file-input" type="file" accept="video/*,image/*" hidden />
+      </div>
+      <p class="note">
+        没有摄像头？用「上传视频/图片测试」进入<strong>文件模式</strong>：验证的是「算力核心」——识别速度与准确性；
+        端到端实时管道（采集 → 检测 → 渲染的完整链路）仍需摄像头模式验证。视频推荐 MP4（H.264）。
+      </p>
       <p id="status-line" class="status-line" aria-live="polite"></p>
       <div id="error-box" class="error-box" hidden>
         <h3 id="error-title"></h3>
@@ -65,9 +73,14 @@
           <span class="stat-label">推理后端</span>
           <span id="m-backend" class="stat-value">--</span>
         </div>
+        <div class="stat">
+          <span class="stat-label">输入来源</span>
+          <span id="m-mode" class="stat-value">--</span>
+        </div>
         <p id="backend-note" class="backend-note" hidden>⚠ GPU 初始化失败，已回退 CPU 推理，性能可能明显下降。</p>
         <p class="hud-criteria">达标线：FPS ≥ 24（<span id="m-fps-judge">--</span>） · 单帧 ≤ 40 ms（<span id="m-ms-judge">--</span>）</p>
       </div>
+      <button id="back-btn" type="button" class="btn-secondary">返回重新选择</button>
     </section>
 
     <footer class="page-footer">

@@ -105,6 +105,45 @@ body {
   cursor: default;
 }
 
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.button-row #start-btn {
+  margin-top: 0;
+}
+
+.btn-secondary {
+  padding: 12px 28px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: scale(1.03);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+#back-btn {
+  margin-top: 16px;
+  font-size: 13px;
+  padding: 8px 20px;
+}
+
 .status-line {
   margin-top: 12px;
   min-height: 1.4em;
@@ -156,6 +195,17 @@ body {
   position: absolute;
   inset: 0;
   height: 100%;
+}
+
+/* 图片文件模式：隐藏 video，canvas 改为文档流元素展示原图+骨架（不镜像） */
+.video-wrap.image-mode video {
+  display: none;
+}
+
+.video-wrap.image-mode canvas {
+  position: static;
+  height: auto;
+  transform: none;
 }
 
 /* ---------- HUD ---------- */
