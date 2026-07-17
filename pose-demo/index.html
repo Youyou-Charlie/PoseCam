@@ -88,6 +88,27 @@
     </footer>
   </main>
 
-  <script type="module" src="app.js"></script>
+  <script>
+    // 兜底：本脚本为普通脚本，file:// 下也一定执行（模块脚本会被浏览器 CORS 策略拦截）
+    (function () {
+      function showBanner(text) {
+        var panel = document.getElementById("setup-panel");
+        if (!panel) return;
+        var div = document.createElement("div");
+        div.style.cssText = "margin:12px 0;padding:12px 14px;border:1px solid #b8860b;border-radius:10px;background:rgba(184,134,11,0.12);color:#f0c96a;font-size:14px;line-height:1.6;text-align:left;";
+        div.textContent = text;
+        panel.insertBefore(div, panel.children[1] || null);
+      }
+      if (location.protocol === "file:") {
+        showBanner("当前是 file:// 直开：「上传视频/图片测试」可用（首次需联网下载模型，约 12 MB）；「开启摄像头」不可用——请在 pose-demo/ 目录运行 python -m http.server 8000，然后访问 http://localhost:8000");
+      }
+      setTimeout(function () {
+        if (!window.__poseDemoReady) {
+          showBanner("app.js 未能加载或初始化失败，按钮不会响应。请改用本地服务打开：在 pose-demo/ 运行 python -m http.server 8000，然后访问 http://localhost:8000；若已用本地服务仍见此提示，按 F12 打开 Console 查看报错。");
+        }
+      }, 4000);
+    })();
+  </script>
+  <script src="app.js"></script>
 </body>
 </html>

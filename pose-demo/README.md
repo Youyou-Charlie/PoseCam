@@ -6,7 +6,7 @@
 
 ## 运行方式
 
-摄像头（`getUserMedia`）只允许在 **安全上下文**（`https://` 或 `localhost`）中使用，因此**不能直接双击 `index.html` 以 `file://` 打开**——那样摄像头不可用。请用本地 HTTP 服务：
+推荐用本地 HTTP 服务打开（两种模式都可用）：
 
 ```bash
 # 方式一：在 pose-demo/ 目录下
@@ -20,6 +20,8 @@ python -m http.server 8000
 ```
 
 没有 Python 也可以用 `npx serve .` 等任意静态文件服务器，效果相同。
+
+也可以直接双击 `index.html` 以 `file://` 打开，但**只有「上传视频/图片测试」文件模式可用**（首次需联网下载模型）；摄像头（`getUserMedia`）只允许在 **安全上下文**（`https://` 或 `localhost`）中使用，`file://` 下点「开启摄像头」会提示改用本地服务。
 
 进入页面后点击「开启摄像头」，授权权限即可。首次加载需联网：运行时（wasm）与模型文件（`pose_landmarker_full.task`，约 9.4 MB）均从 CDN 下载，之后浏览器会缓存。
 
@@ -54,6 +56,7 @@ python -m http.server 8000
 | 现象 | 原因与解决 |
 |---|---|
 | 「非安全上下文」 | 用 `file://` 或局域网 IP（如 `http://192.168.x.x`）打开了页面。改用 `http://localhost:端口` 访问。 |
+| 按钮点击无反应（只有按压动效） | 旧版本的 `type="module"` 脚本在 `file://` 下被浏览器 CORS 策略拦截，JS 未执行。更新到最新代码（已改为普通脚本 + 加载失败横幅提示），或改用 `http://localhost` 访问。 |
 | 「摄像头权限被拒绝」 | 地址栏左侧锁形图标 → 网站设置 → 摄像头改为「允许」，刷新重试。 |
 | 「未检测到摄像头」 | 设备无摄像头/被禁用/驱动异常；换一个带摄像头的设备测试，或改用「上传视频/图片测试」文件模式。 |
 | 「视频文件无法解码播放」 | 格式/编码不被浏览器支持。改用 MP4（H.264）；MOV（HEVC）在 Windows 版 Chrome 上常无法播放，需先转码。 |
@@ -65,7 +68,7 @@ python -m http.server 8000
 
 ## 技术说明
 
-- 无构建步骤：`index.html` + `app.js`（ES module）+ `style.css`，共三个文件。
+- 无构建步骤：`index.html` + `app.js` + `style.css`，共三个文件。`app.js` 以普通脚本加载（模块脚本在 `file://` 下会被浏览器拦截），MediaPipe 库经动态 `import()` 从 CDN 引入；`index.html` 内联兜底脚本会在 `file://` 直开或 `app.js` 加载失败时显示横幅提示。
 - 库：`@mediapipe/tasks-vision@0.10.14`，jsdelivr CDN（`vision_bundle.mjs` 与 `wasm/` 目录同版本）。
 - 模型：PoseLandmarker `pose_landmarker_full`（Google 官方托管，float16）。
 - 推理：`runningMode: "VIDEO"`，`numPoses: 1`，GPU 优先、CPU 兜底；`detectForVideo` 时间戳严格单调递增，重复帧跳过；图片模式经 `setOptions({ runningMode: "IMAGE" })` 切换后调 `detect()`，测完切回 VIDEO。

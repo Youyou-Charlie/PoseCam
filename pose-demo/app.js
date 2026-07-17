@@ -541,3 +541,6 @@ fileInput.addEventListener("change", () => {
 });
 
 backBtn.addEventListener("click", resetToSetup);
+
+// 标记脚本已完整加载执行（供 index.html 内联兜底脚本检测加载失败）
+window.__poseDemoReady = true;
