@@ -24,6 +24,9 @@ const MODEL_ASSET_URL =
 // 通过标准（页面上同步标明）
 const PASS_FPS = 24;
 const PASS_MS = 40;
+// 图片模式参考线：单次全量检测无上一帧跟踪红利，天然约为视频帧耗时的 2 倍，
+// 故不复用 40ms 达标线，单独给 100ms 作量级参考
+const IMAGE_PASS_MS = 100;
 // 滑动平均窗口（帧）
 const AVG_WINDOW = 30;
 // 图片模式测量口径：长边上限、连续检测次数（取中位数）
@@ -553,15 +556,19 @@ function updateHud(result) {
   setCounts(result);
 }
 
-// 静态图：显示 5 次连续检测的中位数，FPS 无意义
+// 静态图：显示 5 次连续检测的中位数，FPS 无意义；
+// 耗时按图片模式自己的参考线（≤100ms）判定，不复用视频流的 40ms 达标线
 function updateHudForImage(result, medianMs) {
+  const pass = medianMs <= IMAGE_PASS_MS;
   mFps.textContent = "静态图";
   mFps.className = "stat-value";
-  setJudge(mMs, medianMs.toFixed(1) + " ms", medianMs <= PASS_MS, "达标", "未达标");
+  setJudge(mMs, medianMs.toFixed(1) + " ms", pass, "达标", "未达标");
   mFpsJudge.textContent = "—";
   mFpsJudge.className = "";
-  mMsJudge.textContent = (medianMs <= PASS_MS ? "达标" : "未达标") + " · 5 次中位数";
-  mMsJudge.className = medianMs <= PASS_MS ? "ok" : "bad";
+  mMsJudge.textContent =
+    (pass ? "达标" : "未达标") +
+    ` · 5 次中位数 · 图片模式参考线 ≤${IMAGE_PASS_MS} ms（单次全量检测 ≈ 2×视频帧）`;
+  mMsJudge.className = pass ? "ok" : "bad";
 
   setCounts(result);
 }
