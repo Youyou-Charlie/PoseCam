@@ -55,6 +55,7 @@
 - ✅ 用户确认补回分享入口：点评页照片右上角新增系统分享按钮（iOS 分享面板语义、增长水印思路、不做社区），FIGMA_SPEC 同步（R1.1），不一致记录第 7 条关闭。
 - ✅ 用户决定：第 2 轮陌生人可用性测试推迟，待最小 MVP 出来后再做；当前优先推进 MVP。
 - ✅ 用户拍板 PWA 网页版先行（原生 iOS 路线不变）。交付 `pwa/` 最小 MVP：真摄像头 + 实时骨架（移动端 lite 模型、GPU→CPU 回退）、5 屏流程沿用冻结视觉、快门拍真实照片、点评页显示真实成片（演示点评已标注）、系统分享/保存、PWA 可安装（manifest + 图标 + apple 元数据）。设计稿：`docs/superpowers/specs/2026-07-17-pwa-mvp-design.md`；部署见 `pwa/README.md`（GitHub Pages）。
+- ✅ GitHub Pages 上线（仓库已转公开）：**https://Youyou-Charlie.github.io/PoseCam/pwa/** ，根目录加 `.nojekyll` 跳过 Jekyll；之后每次推送 GitHub 自动重新部署。
 
 ### 2026-06-25
 
