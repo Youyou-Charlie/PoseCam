@@ -2,6 +2,7 @@
 
 > 日期：2026-07-17
 > 状态：视觉已冻结（高保真原型于 2026-07-17 评审通过），本文档供 Figma 复刻与 iOS 开发标注使用
+> 迭代记录：2026-07-17 R1 迭代增量已同步（取景器 AR 轮廓显隐开关 / AI 点评页「快门即存」/ 场景卡预览文案行）
 > 事实来源：`prototype-hifi/` 高保真原型 —— `style.css` 是全部视觉数值的唯一事实来源，`index.html` / `app.js` 是结构与交互的事实来源
 > 冲突仲裁：本文全部数值以 `style.css` 实际值为准；与 `docs/superpowers/specs/2026-07-17-hifi-prototype-and-pose-demo-design.md`（下称「7-17 规格」）或 `docs/PRD.md` 冲突之处，就地加注并汇总于文末「不一致记录」
 > 读者：在 Figma 中复刻本设计的设计师，以及需要标注信息的 iOS 开发
@@ -19,12 +20,13 @@ Figma 中建议按 `PoseCam/<组>/<名>` 建 Color Styles。「出处」列为 `
 | `bg/app` | `#0A0A0F` | 全部页面主背景 | `--bg` |
 | `bg/viewfinder` | `#000000` | 取景器屏底色（渐变画面之下） | `.vf` |
 | `brand/cyan` | `#00D4AA` | 品牌主色：主按钮、引导线、选中态、强调文字、图标描边 | `--cyan` |
-| `ar/success` | `#34C759` | AR 匹配成功（**原型声明未使用**，见「不一致记录」1） | `--green` |
+| `ar/success` | `#34C759` | AR 匹配成功（轮廓变绿仍未实现，见「不一致记录」1）；R1 起实际用于保存标记 ✓ 图标（`.saved-chip`） | `--green` |
 | `ar/error` | `#FF453A` | AR 未匹配部位高亮、警示 | `--red` |
 | `accent/coral` | `#FF7E67` | 珊瑚橙暖色，**仅限话术锦囊模块** | `--coral` |
 | `text/primary` | `#F5F5F0` | 主文字（暖白） | `--text` |
 | `text/secondary` | `#8E8E93` | 次级文字 | `--text2` |
 | `text/primary-82` | `rgba(245,245,240,0.82)` | AI 建议正文（主文字 82% 不透明） | `.ai-tip` |
+| `text/cyan-72` | `rgba(0,212,170,0.72)` | 场景卡预览文案（品牌青 72% 不透明，R1 新增） | `.scene-preview` |
 | `surface/glass` | `rgba(18,20,28,0.55)` | 标准毛玻璃面板底色 | `--glass` |
 | `surface/glass-heavy` | `rgba(18,20,28,0.78)` | 话术锦囊底部面板（更重） | `.lines-sheet` |
 | `surface/bubble` | `rgba(255,126,103,0.14)` | 锦囊聊天气泡底 | `--bubble` |
@@ -101,7 +103,9 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 | `hint` | 12 | 400 | Auto | 0 | `text/secondary` 70% | 启动页提示（`.splash-hint`） |
 | `tag` | 11.5 | 400 | Auto | 0 | `text/primary` | AR 提示标签（`.ar-tag`） |
 | `sub` | 11.5 | 400 | Auto | 0 | `text/secondary` | 锦囊面板副标（`.sheet-sub`） |
+| `preview` | 11.5 | 400 | Auto | 0 | `text/cyan-72` | 场景卡预览文案（`.scene-preview`，R1 新增） |
 | `meta` | 11 | 400 | Auto | 0 | `text/secondary` | AI 面板场景信息（`.ai-scene`） |
+| `chip` | 11 | 400 | Auto | 0 | `text/primary` | 自动保存标记（`.saved-chip`，R1 新增） |
 | `label` | 10.5 | 400 | Auto | 0 | `text/secondary` | 评分标签（`.score-label`） |
 | `fab-label` | 10 | 600 | Auto | 0 | `accent/coral` | FAB 下文字（`.fab-label`） |
 | `avatar` | 10 | 700 | Auto | 0 | `#FFFFFF` | 气泡头像「AI」（`.bubble-avatar`） |
@@ -112,7 +116,7 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 | Radius token | 值 | 用在 |
 |---|---|---|
-| `radius/pill` | 999（全圆角） | 主/次按钮、焦段胶囊、AR 标签、「换几句」、Toast |
+| `radius/pill` | 999（全圆角） | 主/次按钮、焦段胶囊、AR 标签、「换几句」、Toast、保存标记 chip |
 | `radius/brand` | 28 | 启动页品牌标 |
 | `radius/sheet` | 24（仅顶部两角） | 锦囊底部面板 |
 | `radius/panel` | 20 | 模式卡、场景卡、AI 面板、点评照片、反馈行（`--radius-panel`） |
@@ -142,7 +146,7 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 | Effect Style | 参数 | 用在（出处） |
 |---|---|---|
-| `effect/glass` | 填充 `surface/glass` + **Background blur 20** + 内侧描边 1px `border/glass` | 全部标准玻璃面板：次按钮、返回键、玻璃圆钮、模式卡、场景卡、焦段胶囊、AI 面板、评分 chip、反馈行、Toast |
+| `effect/glass` | 填充 `surface/glass` + **Background blur 20** + 内侧描边 1px `border/glass` | 全部标准玻璃面板：次按钮、返回键、玻璃圆钮（含 AR 开关）、模式卡、场景卡、焦段胶囊、AI 面板、评分 chip、保存标记 chip、反馈行、Toast |
 | `effect/glass-heavy` | 填充 `surface/glass-heavy` + Background blur **24** + 顶描边 1px `border/coral-28` | 锦囊底部面板（`.lines-sheet`） |
 | `effect/cta-cyan` | Drop shadow X0 Y8 B28，`rgba(0,212,170,0.28)` | 主按钮 |
 | `effect/selected-mode` | 描边改 `brand/cyan` 1.5px + 双层阴影：X0 Y0 B0 Spread1 `rgba(0,212,170,0.4)`；X0 Y10 B34 `rgba(0,212,170,0.14)` | 模式卡选中 |
@@ -196,9 +200,9 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 ### 2.4 场景卡片 `scene-card`
 
-- 尺寸：宽 342 × 高 88（padding 12×2 + 缩略图 64）；`radius/panel` 20；padding 12/14
+- 尺寸：宽 342 × 高 ≈88（padding 12×2 + 缩略图 64；R1 新增预览行后文字列三行合计约 57，仍由缩略图撑高，卡高不变）；`radius/panel` 20；padding 12/14
 - 配色：`effect/glass`，描边 1.5px `border/glass`
-- 结构（水平，垂直居中，间距 14）：缩略图 64×64 `radius/thumb`（渐变占位，见 1.1）→ 文字列（Fill，间距 4：名称 `list-title` 17-600 / 描述 `caption` 12.5 `text/secondary`）→ 勾选 24×24（同款圆形对勾）
+- 结构（水平，垂直居中，间距 14）：缩略图 64×64 `radius/thumb`（渐变占位，见 1.1）→ 文字列（Fill，间距 4：名称 `list-title` 17-600 / 描述 `caption` 12.5 `text/secondary` / 预览 `preview` 11.5 `text/cyan-72`，R1 新增第三行）→ 勾选 24×24（同款圆形对勾）
 - 状态：默认 / 选中（`effect/selected-scene`）/ 按下 scale 0.97
 - Auto Layout：水平，居中，gap 14，padding 12/14；缩略图 Fixed 64×64，文字列 Fill，勾选 Fixed 24
 
@@ -246,7 +250,7 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 - 配色：`base/white`（深底上纯白，无额外发光）
 - 状态：默认 / 按下 scale 0.9（0.12s，全组件中最快的按压反馈）
 - Auto Layout：Fixed 76×76，两层圆（环用 stroke，芯用 fill），无需 Auto Layout 嵌套
-- 同排元件：快门行宽 290 居中，三元件 space-between —— 左「上一张缩略图」44×44 `radius/mini` 12 + 1.5px `border/glass-strong`（按下 0.9），右「翻转镜头」玻璃圆钮 44（见 2.12）
+- 同排元件：快门行宽 290 居中，三元件 space-between —— 左「上一张缩略图」44×44 `radius/mini` 12 + 1.5px `border/glass-strong`（按下 0.9），右「翻转镜头」玻璃圆钮 44（见 2.14）
 
 ### 2.10 评分 chip `score-chip`
 
@@ -264,12 +268,28 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 - 状态：仅默认（纯展示）
 - Auto Layout：水平顶对齐，gap 12，padding 13/15；图标 Fixed 34，文字列 Fill
 
-### 2.12 辅助元件速查
+### 2.12 AR 轮廓显隐开关 `ar-toggle`（R1 新增）
+
+- 尺寸：44×44 正圆（复用 `btn-glass-circle` 基底，`effect/glass`）；位于取景器顶栏右侧（`vf-top` 内，与左侧返回键同为 44，焦段胶囊保持视觉居中）
+- 图标：21×21 虚线人形轮廓（viewBox 24，stroke 1.9 圆头，dash 3/2.6；描边 `currentColor` 随态变色）
+- 状态：开（默认，`ar-toggle.on`：图标 `brand/cyan`，描边改 `rgba(0,212,170,0.45)`）/ 关（图标 `text/secondary`，描边回落 `border/glass`）/ 按下 scale 0.9；色彩过渡 0.2s，`aria-pressed` 同步
+- 行为：整体切换 AR 姿势轮廓（单人/双人两套 SVG）与未匹配提示标签 `ar-tag` 的显隐；默认开（`state.arOn: true`），会话内有效、不持久化
+- Auto Layout：Fixed 44×44，居中放图标，无需嵌套
+
+### 2.13 自动保存标记 `saved-chip`（R1 新增）
+
+- 尺寸：padding 8/12，Hug contents，高 ≈ 29；`radius/pill`；定位于点评照片右下（右/下各 14），与评分 chip 同排呼应
+- 配色：`effect/glass`；文字 `chip` 11-400 `text/primary`，不换行
+- 结构（水平居中，间距 5）：✓ 图标 13×13（stroke 2.6 圆头，`ar/success` 绿 —— 该 token 的首个实际用例）+ 文案「已自动保存到相册」
+- 状态：仅默认（「快门即存」的状态确认，纯展示无点击交互）
+- Auto Layout：水平，居中，padding 8/12，gap 5，Hug contents
+
+### 2.14 辅助元件速查
 
 | 元件 | 关键参数 |
 |---|---|
 | 返回键 `btn-back` | 38×38 正圆，`effect/glass`，箭头图标 20；按下 scale 0.9 |
-| 玻璃圆钮 `btn-glass-circle` | 44×44 正圆，`effect/glass`，图标 21；用于取景器顶栏返回、翻转镜头；按下 0.9 |
+| 玻璃圆钮 `btn-glass-circle` | 44×44 正圆，`effect/glass`，图标 21；用于取景器顶栏返回、翻转镜头，并作 AR 开关基底（见 2.12）；按下 0.9 |
 | AR 提示标签 `ar-tag` | pill，padding 6/12，间距 6：红点 6×6 `ar/error` + 文字 `tag` 11.5；`effect/glass` 但描边改 1px `border/error-45`；不换行 |
 | 勾选标记 `mode/scene-check` | 24×24，圆底 `brand/cyan` + 对勾 `base/on-cyan` stroke 2.4；隐藏态 opacity 0 scale 0.6 |
 | Toast | pill，padding 11/22，`bubble` 13.5；`effect/glass`；定位水平居中、bottom 64；进场见 1.6 |
@@ -318,10 +338,10 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 1. 页头：返回键（→ 屏 2）+ 标题「选一个约会场景」；副标「AI 将按场景推荐焦段、姿势与话术」
 2. 场景列表：4 张场景卡（规格见 2.4），垂直间距 12：
-   - 咖啡厅（默认选中）「窗边暖光 · 氛围感首选」— `thumb-cafe`
-   - 街拍「城市线条 · 随性松弛感」— `thumb-street`
-   - 夜景「霓虹光斑 · 电影感拉满」— `thumb-night`
-   - 室内「居家日常 · 自然生活感」— `thumb-indoor`
+   - 咖啡厅（默认选中）「窗边暖光 · 氛围感首选」/ 预览「暖光木质调 · 窗光侧脸与半身特写」— `thumb-cafe`
+   - 街拍「城市线条 · 随性松弛感」/ 预览「延伸线构图 · 霓虹背景与城市氛围」— `thumb-street`
+   - 夜景「霓虹光斑 · 电影感拉满」/ 预览「光斑虚化 · 电影感逆光与车流拉丝」— `thumb-night`
+   - 室内「居家日常 · 自然生活感」/ 预览「自然窗光 · 松弛生活感人像」— `thumb-indoor`
 3. 页脚：主按钮「进入取景器」
 
 **交互：** 点卡切换选中（单选）；「进入取景器」→ 屏 4，并把所选场景渐变、模式标签、AR 轮廓形态（单人/双人）同步到取景器。
@@ -335,9 +355,9 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 |---|---|---|
 | 0 | `vf-scene` | 全屏取景画面（场景渐变占位） |
 | 1 | `vf-vignette` | 暗角 + 人物光影叠层（见 1.1），不响应点击 |
-| 2 | `ar-outline` | AR 姿势轮廓（单人 196 宽 / 双人 260 宽） |
-| 3 | `ar-tag` | 未匹配部位提示标签 |
-| 10 | `vf-top` / `ai-panel` / `vf-bottom` | 顶栏 / AI 面板 / 快门区 |
+| 2 | `ar-outline` | AR 姿势轮廓（单人 196 宽 / 双人 260 宽；R1 起受 AR 开关显隐控制） |
+| 3 | `ar-tag` | 未匹配部位提示标签（随 AR 轮廓一同显隐） |
+| 10 | `vf-top` / `ai-panel` / `vf-bottom` | 顶栏（含 R1 新增 AR 显隐开关）/ AI 面板 / 快门区 |
 | 11 | `fab-coral` | 话术锦囊入口 |
 | 30 | `flash` | 拍照闪白 |
 | 40 | `scrim` | 锦囊遮罩 |
@@ -347,7 +367,7 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 **关键布局尺寸：**
 
-- 顶栏 `vf-top`：top 58、左右 16；左返回 44（→ 屏 3），中焦段胶囊（Hug），右 44 占位块保持胶囊视觉居中
+- 顶栏 `vf-top`：top 58、左右 16；左返回 44（→ 屏 3），中焦段胶囊（Hug），右 AR 轮廓显隐开关 44（规格见 2.12；与返回键同为 44，胶囊保持视觉居中）
 - AR 轮廓：水平居中，中心位于屏高 42%（双人 43%）；3px 虚线 dash 7/7，匹配中段 cyan + `effect/glow-cyan`，未匹配段 red + `effect/glow-red`；脉冲动画 2.6s
 - AR 标签 `ar-tag`：单人时 left 58% / top 27%，双人时 left 62% / top 36%（**以 JS 运行值为准**，见「不一致记录」2）；文案示例「右臂再抬高一点」
 - AI 面板：左 16 / 右 88 / bottom 142（规格见 2.6）；示例文案 —— 徽标「AI 摄影师」、场景「咖啡厅 · 帮 TA 拍」、姿势「侧身靠窗」、正文「让 TA 侧对窗户，脸转向光源，轮廓会更柔和。跟随红色引导线，右臂再抬高一点。」
@@ -359,6 +379,7 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 - AI 面板刷新钮 → 轮换当前场景的 3 条建议，**焦段胶囊同步切换**（数据见 `app.js` `GUIDES`）
 - FAB → 锦囊面板自下滑出（0.34s）+ 遮罩淡入；点遮罩或 ✕ 关闭；「换几句」翻页换 3 条
 - 快门 → 全屏闪白 0.38s → 360ms 后跳屏 5（点评照片与副标同步当前场景/模式）
+- AR 开关 → 切换 AR 姿势轮廓与未匹配提示标签的整体显隐（默认开，会话内有效不持久化；开关 on/off 态见 2.12）
 - 翻转镜头 / 缩略图 → 仅 Toast 演示反馈；返回 → 屏 3
 
 **状态变体（本屏需重点出图）：**
@@ -366,8 +387,9 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 1. AR 匹配中（默认）：青色虚线 + 局部红色未匹配段 + 红色提示标签
 2. AR 已匹配：**原型未实现**，按 `ar/success` 全绿轮廓补画（见「不一致记录」1）
 3. 单人轮廓（帮 TA 拍）/ 双人轮廓（我们合照）
-4. 锦囊面板关闭 / 滑出（含遮罩）
-5. Toast 显示态（如「已切换前后镜头（演示）」）
+4. AR 开关 on / off（off：轮廓与提示标签整体隐藏，仅留纯净取景画面；R1 新增）
+5. 锦囊面板关闭 / 滑出（含遮罩）
+6. Toast 显示态（如「已切换前后镜头（演示）」）
 
 ### 屏 5 · AI 点评 `screen-review`
 
@@ -376,13 +398,14 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 1. 页头：返回键（→ 屏 4）+ 标题「AI 拍摄点评」；副标动态文案「{场景} · {模式}」（如「咖啡厅 · 帮 TA 拍」）
 2. 点评照片 `review-photo`：宽 342 × **高 380**（CSS 声明 3/4 比例但被 `max-height:380` 截断，见「不一致记录」5），`radius/panel` 20 + 1px `border/glass`；场景渐变 + 叠层（见 1.1）；下距 20
 3. 评分 chip：叠在照片左下 14/14（规格见 2.10），示例「8.6 / AI 综合评分」
-4. 反馈列表 `fb-list`：3 条反馈行（规格见 2.11），间距 10，下距 8：
+4. 自动保存标记 `saved-chip`：与评分 chip 同行、贴照片右下 14/14（规格见 2.13），「✓ 已自动保存到相册」（R1 新增，「快门即存」状态确认）
+5. 反馈列表 `fb-list`：3 条反馈行（规格见 2.11），间距 10，下距 8：
    - 构图 ★★★★☆「人物落在右侧三分线，头顶留白舒适，构图很稳。」
    - 姿势 ★★★☆☆「右臂线条略僵，下次再放松一点会更自然。」
    - 情绪 ★★★★★「笑容自然有感染力，这张的情绪价值拉满。」
-5. 页脚双按钮行（间距 12，各宽 165）：次按钮「再拍一张」（→ 屏 4）+ 主按钮「保存照片」
+6. 页脚双按钮行（间距 12，各宽 165）：主按钮「再拍一张」（→ 屏 4）+ 次按钮「完成」（仅 Toast 反馈）；R1 起移除原主按钮「保存照片」
 
-**交互：** 保存 → Toast「已保存到相册」；再拍一张 / 返回 → 屏 4。
+**交互：** 快门即存 —— 按下快门时照片已自动保存，saved-chip 作状态确认（无手动保存入口）；「完成」→ Toast「拍摄完成，成片已在相册（演示）」；再拍一张 / 返回 → 屏 4。
 **状态变体：** 星级 1–5（实心 cyan / 空心 18% 白）；评分数字随照片变化。
 
 ---
@@ -391,7 +414,7 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 ### 4.1 导出倍率与切片命名
 
-- 图标与矢量图形（返回、刷新、关闭、翻转、对勾、AI 星标、反馈图标、品牌标、AR 轮廓）：导出 **PDF 单倍矢量**（Xcode Asset Catalog 勾选 Preserve Vector Data），统一在各自 viewBox 画板（24 / 48 / 64）内导出；备选 SVG。
+- 图标与矢量图形（返回、刷新、关闭、翻转、对勾、AI 星标、反馈图标、品牌标、AR 轮廓、AR 开关人形）：导出 **PDF 单倍矢量**（Xcode Asset Catalog 勾选 Preserve Vector Data），统一在各自 viewBox 画板（24 / 48 / 64）内导出；备选 SVG。
 - 位图素材（4 张场景渐变缩略图、点评占位照片）：**@2x / @3x PNG**。
 - 切片命名：`posecam_<模块>_<名称>[_<状态>]`，全小写蛇形；位图带倍率后缀。示例：
   - `posecam_icon_back.pdf`、`posecam_icon_check_selected.pdf`
@@ -427,9 +450,10 @@ Figma Text Styles 建议命名 `PoseCam/<语义名>`：
 
 ## 附：不一致记录
 
-1. **AR「已匹配」绿色态未实现**：7-17 规格第 2 节定义「匹配后轮廓变绿」，`style.css` 声明了 `--green: #34C759`，但原型 CSS/JS 均未使用该变量，取景器只有「匹配中（青）+ 未匹配部位（红）」一态。处理：Figma 按 `--green` 补 matched 变体；开发按 token 实现。
+1. **AR「已匹配」绿色态未实现**：7-17 规格第 2 节定义「匹配后轮廓变绿」，`style.css` 声明了 `--green: #34C759`，取景器至今仍只有「匹配中（青）+ 未匹配部位（红）」一态。R1 起该变量已被保存标记 ✓（`.saved-chip`）实际引用，不再是「声明未使用」的 token。处理：Figma 按 `--green` 补 AR matched 变体；开发按 token 实现。
 2. **AR 提示标签位置双份定义**：`style.css` 默认 `top:25%; left:59%`，但 `app.js` 进入取景器时覆盖为单人 `left 58% / top 27%`、双人 `left 62% / top 36%`，CSS 默认值实际从不生效。处理：以 JS 运行值为准（本文已按此标注）。
 3. **圆角不止 20px**：7-17 规格第 2 节仅写「圆角 20px」，CSS 实际存在 28 / 24 / 20 / 16 / 16+4 / 14 / 12 / 11 多档（见 1.3）。处理：以 CSS 为准。
 4. **`--panel: #12141C` 声明未使用**：7-17 规格写作「次级面板底」，但 CSS 中所有面板均为半透明玻璃 `rgba(18,20,28,0.55)`，`#12141C` 仅是玻璃基色，无纯色面板实例。处理：Figma 不建纯色面板样式，保留 token 仅作 glass 底色的不透明等效参考。
 5. **点评照片比例被截断**：`.review-photo` 声明 `aspect-ratio: 3/4`（342 宽应对应高 456），同时 `max-height: 380px` 生效，实际渲染 342×380（≈1:1.11），3/4 比例不成立。处理：Figma 按 342×380 画；若产品希望严格 3/4，需另行决策（本文不擅自改值）。
 6. **PRD 与冻结视觉冲突**：`docs/PRD.md` 3.3.1 写「轮廓线白色或浅蓝色、透明度 60-70%」，与青色虚线方案不符。处理：PRD 为早期草案，以 7-17 规格与 CSS 为准。
+7. **点评页按钮组与「保存」入口变更（R1）**：7-17 规格「页面清单（5 屏）」第 5 条定义点评页含「重拍/保存按钮」，PRD 3.1 功能架构写拍摄后「一键保存/分享」；R1 原型改为「快门即存」——快门按下即自动保存，点评页评分 chip 同行新增 saved-chip 状态标记，页脚改为主按钮「再拍一张」+ 次按钮「完成」，无手动保存/分享入口。处理：以 R1 原型为准；「分享」入口是否补充待产品决策，本文不擅自加。
