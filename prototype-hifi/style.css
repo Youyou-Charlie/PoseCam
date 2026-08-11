@@ -839,6 +839,15 @@ button {
 
 .saved-chip svg { width: 13px; height: 13px; color: var(--green); flex: none; }
 
+/* 分享按钮（点评照片右上角，复用玻璃圆钮体系；语义：调起 iOS 系统分享面板） */
+.btn-share {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  color: var(--cyan);
+}
+
 .fb-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
 
 .fb-item {

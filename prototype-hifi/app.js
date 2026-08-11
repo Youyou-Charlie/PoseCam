@@ -260,6 +260,8 @@
 
   // 「完成」：快门即存语义下照片已自动保存，这里仅作演示反馈
   $('#btn-done').addEventListener('click', function () { toast('拍摄完成，成片已在相册（演示）'); });
+  // 「分享」：语义为调起 iOS 系统分享面板（不做社区），原型以 Toast 演示
+  $('#btn-share').addEventListener('click', function () { toast('已调起系统分享面板（演示）'); });
   $('#btn-flip').addEventListener('click', function () { toast('已切换前后镜头（演示）'); });
   $('#thumb-mini').addEventListener('click', function () { toast('上一张成片（演示）'); });
 
