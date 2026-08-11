@@ -13,7 +13,8 @@
     mode: 'ta',        // ta=帮TA拍 / us=我们合照
     scene: 'cafe',     // cafe / street / night / indoor
     adviceIdx: 0,      // 当前 AI 建议索引
-    linesPage: 0       // 话术锦囊分页
+    linesPage: 0,      // 话术锦囊分页
+    arOn: true         // AR 姿势轮廓显隐开关（会话内有效）
   };
 
   var MODE_LABEL = { ta: '帮 TA 拍', us: '我们合照' };
@@ -133,20 +134,34 @@
     $('#vf-scene').className = 'vf-scene thumb-' + state.scene;
     $('#thumb-mini').className = 'thumb-mini thumb-' + state.scene;
     $('#ai-scene').textContent = SCENE_LABEL[state.scene] + ' · ' + MODE_LABEL[state.mode];
+    syncAr();
+    applyAdvice();
+  }
 
-    var solo = (state.mode === 'ta');
+  // AR 轮廓显隐 = 用户开关(state.arOn) × 拍摄模式(单人/双人)
+  // 开关只控制"用户是否要看轮廓"，模式逻辑控制"显示单人还是双人"
+  function syncAr() {
+    var soloEl = $('#ar-solo');
+    var coupleEl = $('#ar-couple');
+    var tag = $('#ar-tag');
     // .hidden 是 HTMLElement 的 IDL 属性，对 SVG 元素赋值不会映射到 hidden 内容属性，
     // 必须用 setAttribute/removeAttribute 才能让 [hidden]{display:none} 生效
-    if (solo) {
-      $('#ar-solo').removeAttribute('hidden');
-      $('#ar-couple').setAttribute('hidden', '');
-    } else {
-      $('#ar-solo').setAttribute('hidden', '');
-      $('#ar-couple').removeAttribute('hidden');
+    if (!state.arOn) {
+      soloEl.setAttribute('hidden', '');
+      coupleEl.setAttribute('hidden', '');
+      tag.setAttribute('hidden', '');
+      return;
     }
-
+    var solo = (state.mode === 'ta');
+    if (solo) {
+      soloEl.removeAttribute('hidden');
+      coupleEl.setAttribute('hidden', '');
+    } else {
+      soloEl.setAttribute('hidden', '');
+      coupleEl.removeAttribute('hidden');
+    }
+    tag.removeAttribute('hidden');
     // 未匹配提示标签对准红色部位（单人 / 双人轮廓位置不同）
-    var tag = $('#ar-tag');
     if (solo) {
       tag.style.left = '58%';
       tag.style.top = '27%';
@@ -154,13 +169,19 @@
       tag.style.left = '62%';
       tag.style.top = '36%';
     }
-
-    applyAdvice();
   }
 
   $('#btn-to-vf').addEventListener('click', function () {
     syncViewfinder();
     show('screen-viewfinder');
+  });
+
+  // AR 轮廓显隐开关（会话内有效，不持久化）
+  $('#btn-ar-toggle').addEventListener('click', function () {
+    state.arOn = !state.arOn;
+    this.classList.toggle('on', state.arOn);
+    this.setAttribute('aria-pressed', String(state.arOn));
+    syncAr();
   });
 
   // AI 摄影师「换一条」
@@ -237,7 +258,8 @@
     toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1800);
   }
 
-  $('#btn-save').addEventListener('click', function () { toast('已保存到相册'); });
+  // 「完成」：快门即存语义下照片已自动保存，这里仅作演示反馈
+  $('#btn-done').addEventListener('click', function () { toast('拍摄完成，成片已在相册（演示）'); });
   $('#btn-flip').addEventListener('click', function () { toast('已切换前后镜头（演示）'); });
   $('#thumb-mini').addEventListener('click', function () { toast('上一张成片（演示）'); });
 

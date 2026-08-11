@@ -97,6 +97,7 @@
           <span class="scene-info">
             <span class="scene-name">咖啡厅</span>
             <span class="scene-desc">窗边暖光 · 氛围感首选</span>
+            <span class="scene-preview">暖光木质调 · 窗光侧脸与半身特写</span>
           </span>
           <span class="scene-check">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -108,6 +109,7 @@
           <span class="scene-info">
             <span class="scene-name">街拍</span>
             <span class="scene-desc">城市线条 · 随性松弛感</span>
+            <span class="scene-preview">延伸线构图 · 霓虹背景与城市氛围</span>
           </span>
           <span class="scene-check">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -119,6 +121,7 @@
           <span class="scene-info">
             <span class="scene-name">夜景</span>
             <span class="scene-desc">霓虹光斑 · 电影感拉满</span>
+            <span class="scene-preview">光斑虚化 · 电影感逆光与车流拉丝</span>
           </span>
           <span class="scene-check">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -130,6 +133,7 @@
           <span class="scene-info">
             <span class="scene-name">室内</span>
             <span class="scene-desc">居家日常 · 自然生活感</span>
+            <span class="scene-preview">自然窗光 · 松弛生活感人像</span>
           </span>
           <span class="scene-check">
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00D4AA"/><path d="M8 12.5l2.6 2.6L16.5 9" stroke="#0A0A0F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -191,7 +195,12 @@
           <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="focal-pill" id="focal-pill">建议焦段 2x · 半身特写</div>
-        <span class="vf-top-spacer"></span>
+        <button class="btn-glass-circle ar-toggle on" id="btn-ar-toggle" aria-label="AR 姿势轮廓开关" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="7.6" r="3.4" stroke="currentColor" stroke-width="1.9" stroke-dasharray="3 2.6"/>
+            <path d="M5.2 19.6c1.1-4.8 3.6-7 6.8-7s5.7 2.2 6.8 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-dasharray="3 2.6"/>
+          </svg>
+        </button>
       </div>
 
       <!-- AI 摄影师指导面板 -->
@@ -272,6 +281,10 @@
           <span class="score-num">8.6</span>
           <span class="score-label">AI 综合评分</span>
         </div>
+        <div class="saved-chip">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5.5 12.8l4.2 4.2L18.5 8.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          已自动保存到相册
+        </div>
       </div>
 
       <div class="fb-list">
@@ -305,8 +318,8 @@
       </div>
 
       <div class="page-foot foot-row">
-        <button class="btn-pill btn-ghost" data-go="screen-viewfinder">再拍一张</button>
-        <button class="btn-pill btn-primary" id="btn-save">保存照片</button>
+        <button class="btn-pill btn-primary" data-go="screen-viewfinder">再拍一张</button>
+        <button class="btn-pill btn-ghost" id="btn-done">完成</button>
       </div>
     </section>
 
