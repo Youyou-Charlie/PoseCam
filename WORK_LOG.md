@@ -53,6 +53,8 @@
 - ✅ 按报告决策完成原型 Top 3 迭代：AR 轮廓显隐开关（取景器顶部栏，SVG 用 setAttribute 切换）、点评页快门即存语义（自动保存状态 + 再拍一张/完成）、场景卡一句话预览；PRD 级提案「分析当前画面（实时视觉分析）」待用户拍板。
 - ✅ 用户拍板：「AI 实时场景分析（分析当前画面）」进 PRD v0.2（P1、阶段二、Pro 订阅权益）；分享入口问题已向用户澄清（系统分享≠社区化），待确认后补进原型。
 - ✅ 用户确认补回分享入口：点评页照片右上角新增系统分享按钮（iOS 分享面板语义、增长水印思路、不做社区），FIGMA_SPEC 同步（R1.1），不一致记录第 7 条关闭。
+- ✅ 用户决定：第 2 轮陌生人可用性测试推迟，待最小 MVP 出来后再做；当前优先推进 MVP。
+- ✅ 用户拍板 PWA 网页版先行（原生 iOS 路线不变）。交付 `pwa/` 最小 MVP：真摄像头 + 实时骨架（移动端 lite 模型、GPU→CPU 回退）、5 屏流程沿用冻结视觉、快门拍真实照片、点评页显示真实成片（演示点评已标注）、系统分享/保存、PWA 可安装（manifest + 图标 + apple 元数据）。设计稿：`docs/superpowers/specs/2026-07-17-pwa-mvp-design.md`；部署见 `pwa/README.md`（GitHub Pages）。
 
 ### 2026-06-25
 
@@ -99,9 +101,9 @@
 3. ✅ **用户评审**：原型通过、视觉冻结；demo 视频模式双达标，图片模式按独立参考线达标；摄像头补测取消（2026-07-17）。
 4. ✅ **输出正式 Figma 设计稿规格**：`docs/FIGMA_SPEC.md` 已交付（2026-07-17）。
 5. ✅ **制定可用性测试计划**：`docs/USABILITY_TEST_PLAN.md` 已交付（2026-07-17）。
-6. ✅ **可用性测试第 1 轮（本人场）**：报告见 `docs/USABILITY_REPORT_R1_2026-07-17.md`；第 2 轮需陌生人 n≥3（至少 2 对情侣现场），补测 T3 双人任务与锦囊发现率。
-7. （后续，需 Mac + Xcode）**技术脚手架**：创建 SwiftUI + ARKit + Vision 项目；需提前规划 Mac 与 Apple 开发者账号（¥688/年）。
-8. （后续）**MVP 开发**：按 `docs/MVP_PLAN.md` 的 8 个里程碑推进。
+6. ✅ **可用性测试第 1 轮（本人场）**：报告见 `docs/USABILITY_REPORT_R1_2026-07-17.md`；第 2 轮陌生人测试由用户决定推迟至 MVP 出来后（届时补测 T3 双人任务与锦囊发现率）。
+7. ✅ **PWA 网页版最小 MVP**：`pwa/` 已交付（2026-07-17）；待用户 iPhone 真机部署实测（开启 GitHub Pages 步骤见 `pwa/README.md`）。
+8. （后续，需 Mac + Xcode）**原生技术脚手架与 MVP 开发**：创建 SwiftUI + ARKit + Vision 项目，按 `docs/MVP_PLAN.md` 的 8 个里程碑推进；需提前规划 Mac 与 Apple 开发者账号（¥688/年）。
 
 ---
 
@@ -130,6 +132,11 @@ Pose相机/
 │   ├── app.js
 │   ├── style.css
 │   └── README.md
+├── pwa/                               # PWA 网页版最小 MVP（2026-07-17）
+│   ├── index.html / style.css / app.js
+│   ├── manifest.json
+│   ├── icons/                         # 应用图标（tools/gen_icons.py 生成）
+│   └── README.md                      # 部署与使用说明
 ├── .kimi/
 │   ├── references/
 │   │   └── PDLC_REFERENCE.md          # 产品开发生命周期参考
