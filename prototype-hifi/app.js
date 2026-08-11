@@ -135,8 +135,15 @@
     $('#ai-scene').textContent = SCENE_LABEL[state.scene] + ' · ' + MODE_LABEL[state.mode];
 
     var solo = (state.mode === 'ta');
-    $('#ar-solo').hidden = !solo;
-    $('#ar-couple').hidden = solo;
+    // .hidden 是 HTMLElement 的 IDL 属性，对 SVG 元素赋值不会映射到 hidden 内容属性，
+    // 必须用 setAttribute/removeAttribute 才能让 [hidden]{display:none} 生效
+    if (solo) {
+      $('#ar-solo').removeAttribute('hidden');
+      $('#ar-couple').setAttribute('hidden', '');
+    } else {
+      $('#ar-solo').setAttribute('hidden', '');
+      $('#ar-couple').removeAttribute('hidden');
+    }
 
     // 未匹配提示标签对准红色部位（单人 / 双人轮廓位置不同）
     var tag = $('#ar-tag');
