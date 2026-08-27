@@ -16,7 +16,7 @@
 - [x] 任务 0：现状核对 + 本文件（无 BLOCKED 项）
 - [x] Task 1：poseSmooth.js + 测试（红→绿，`poseSmooth tests passed`，0 skipped）+ 渲染循环接入（每 2 帧检测 1 次、双人各一平滑器、null 淡出）；规格测试 `a.x` 笔误勘误记 BLOCKED.md B1
 - [x] Task 2：aiClient.js（三预设+自定义、chat/testConnection、401/429/超时中文映射）+ 设置面板（齿轮/毛玻璃/存取/测试连接）+ 分析按钮未配置置灰；新增 pwa/tests/aiClient.test.js 全绿；Playwright 实测：面板开合/刷新持久化/置灰回灰、控制台 0 错误
-- [ ] Task 3：pwa/js/prompts.js + pwa/tests/prompts.test.js（含坏 JSON 反向验证红→绿）
+- [x] Task 3：prompts.js（场景/点评双提示词 + 围栏剥离 + 首尾散文容忍 + 严格校验抛中文错）+ 测试全绿（红：模块缺失→绿：`prompts tests passed`）；反向验证已贴红（`Error: AI 返回中找不到 JSON 对象（缺少大括号）`）→还原全绿；中途修过 1 处自撰断言正则过窄（截断 JSON 走「找不到 JSON」路径而非「解析失败」），断言意图不变并补 1 用例
 - [ ] Task 4：captureFrame + 「分析当前画面」真功能
 - [ ] Task 5：真实照片点评 applyReview
 - [ ] Task 6：诚实化文案 + README 清单
