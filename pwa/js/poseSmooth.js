@@ -43,6 +43,7 @@
           var prev = smoothed[i];
           if (!cur) continue; // 关键点缺失：保留 prev
           if (cur.visibility !== undefined && cur.visibility < minVisibility) continue; // 低可见性：保留 prev
+          if (!isFinite(cur.x) || !isFinite(cur.y) || !isFinite(cur.z)) continue; // 非有限坐标（NaN/Infinity）：保留 prev，防止污染平滑状态
           if (!prev) {
             smoothed[i] = clonePoint(cur);
             continue;

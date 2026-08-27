@@ -50,4 +50,13 @@ const d2 = s4.update([{ x: 1, y: 1, z: 1, visibility: 0.9 }]);
 assert(Math.abs(d2[0].x - 0.4) < 1e-9, "默认 alpha=0.4：s = 0.4*1 + 0.6*0");
 assert(Math.abs(d2[0].z - 0.4) < 1e-9, "z 轴同样参与 EMA");
 
+// 回归：NaN/Infinity 坐标不得污染平滑状态（验收暗卷发现并已修复）
+const s5 = globalThis.PoseCam.createPoseSmoother({ alpha: 0.5 });
+s5.update([{ x: 0.5, y: 0.5, z: 0, visibility: 0.9 }]);
+const n1 = s5.update([{ x: NaN, y: 0.2, z: 0, visibility: 0.9 }]);
+assert(!Number.isNaN(n1[0].x), "NaN 不得穿透平滑器");
+const n2 = s5.update([{ x: Infinity, y: 0.2, z: 0, visibility: 0.9 }]);
+assert(isFinite(n2[0].x), "Infinity 不得穿透平滑器");
+assert(Math.abs(n2[0].x - 0.5) < 1e-9, "污染帧应被丢弃，保留上一帧平滑值");
+
 console.log("poseSmooth tests passed");
