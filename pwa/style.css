@@ -496,8 +496,31 @@ button {
   justify-content: space-between;
 }
 
-/* 骨架引导显隐开关：默认开启（青色），关闭时回落为灰色（沿用原型语义） */
-.ar-toggle { color: var(--text2); transition: transform 0.15s ease, color 0.2s ease, border-color 0.2s ease; }
+/* 骨架引导显隐开关：默认开启（青色），关闭时回落为灰色（沿用原型语义）
+   v2：加「β」角标——实验功能，原生 App 中将是稳定引导 */
+.ar-toggle {
+  position: relative;
+  color: var(--text2);
+  transition: transform 0.15s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.ar-toggle::after {
+  content: "β";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 2px;
+  border-radius: 999px;
+  background: var(--coral);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+  box-shadow: 0 0 0 2px rgba(10, 10, 15, 0.8);
+}
 
 .ar-toggle.on { color: var(--cyan); border-color: rgba(0, 212, 170, 0.45); }
 

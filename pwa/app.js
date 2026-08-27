@@ -612,11 +612,12 @@
     arTagText.textContent = text;
   }
 
-  /* ---------- 骨架引导显隐开关（沿用原型 AR 开关语义） ---------- */
+  /* ---------- 骨架引导显隐开关（沿用原型 AR 开关语义；β 实验功能） ---------- */
   $('#btn-ar-toggle').addEventListener('click', function () {
     state.arOn = !state.arOn;
     this.classList.toggle('on', state.arOn);
     this.setAttribute('aria-pressed', String(state.arOn));
+    if (state.arOn) toast('骨架引导为实验功能（β），原生 App 中将是稳定引导');
     if (!state.arOn) clearOverlay();
     lastTagState = '';
     updatePoseTag(null);
