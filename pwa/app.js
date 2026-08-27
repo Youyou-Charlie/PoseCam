@@ -201,8 +201,23 @@
     return GUIDES[state.scene][state.adviceIdx];
   }
 
+  // 进入取景器前：同步模式/场景标签与首条建议，然后启动相机
+  function syncViewfinder() {
+    state.adviceIdx = 0;
+    $('#ai-scene').textContent = SCENE_LABEL[state.scene] + ' · ' + MODE_LABEL[state.mode];
+    applyAdvice();
+  }
+
+  /* ---------- v2 · AI 实时分析数据入口 ----------
+     adviceSource：'preset'=预设库 / 'ai'=VLM 实时分析（换一条/失败都会回到 preset） */
+  var adviceSource = 'preset';
+  var aiAdvicePose = '';
+  var aiLines = null;      // AI 生成的 3 条锦囊话术（null=用预设库）
+  var bubbleSource = 'preset'; // 锦囊当前数据源（打开锦囊时若已有 AI 话术则先展示 AI 3 条）
+
   function applyAdvice() {
     var g = currentGuide();
+    adviceSource = 'preset';
     $('#focal-pill').textContent = '建议焦段 ' + g.focal + ' · ' + g.fl;
     $('#ai-pose').textContent = g.pose;
     $('#ai-tip').textContent = g.tip;
@@ -210,11 +225,23 @@
     updatePoseTag(null);
   }
 
-  // 进入取景器前：同步模式/场景标签与首条建议，然后启动相机
-  function syncViewfinder() {
-    state.adviceIdx = 0;
-    $('#ai-scene').textContent = SCENE_LABEL[state.scene] + ' · ' + MODE_LABEL[state.mode];
-    applyAdvice();
+  function applySceneAdvice(advice) {
+    adviceSource = 'ai';
+    aiAdvicePose = advice.pose;
+    $('#focal-pill').textContent = '建议焦段 ' + advice.focal;
+    $('#ai-pose').textContent = advice.pose;
+    $('#ai-tip').textContent = advice.tip;
+    aiLines = advice.lines.slice();
+    var note = $('#ai-note');
+    note.textContent = 'AI 实时分析 · 刚刚';
+    note.classList.remove('warn');
+    note.hidden = false;
+    lastTagState = '';
+    updatePoseTag(null);
+    if (!scrim.hidden) { // 锦囊正开着：立即切到 AI 话术
+      bubbleSource = 'ai';
+      renderBubbles();
+    }
   }
 
   $('#btn-to-vf').addEventListener('click', function () {
@@ -549,6 +576,11 @@
       setTag('hidden');
       return;
     }
+    if (adviceSource === 'ai') {
+      // AI 实时建议无关键点规则，只给保持提示
+      setTag('miss', '保持：' + aiAdvicePose);
+      return;
+    }
     var g = currentGuide();
     if (g.rule === 'raise-right-arm') {
       var ok = false;
@@ -706,24 +738,33 @@
     }
   });
 
-  /* ---------- 话术锦囊（暖色模块，行为同原型） ---------- */
+  /* ---------- 话术锦囊（暖色模块，行为同原型；v2：有 AI 实时话术时优先展示） ---------- */
   var scrimTimer = null;
 
+  function bubbleRow(text) {
+    return '<div class="bubble-row">' +
+             '<span class="bubble-avatar">AI</span>' +
+             '<span class="bubble">' + text + '</span>' +
+           '</div>';
+  }
+
   function renderBubbles() {
-    var lines = LINES[state.scene];
-    var start = (state.linesPage * 3) % lines.length;
     var html = '';
-    for (var i = 0; i < 3; i++) {
-      html += '<div class="bubble-row">' +
-                '<span class="bubble-avatar">AI</span>' +
-                '<span class="bubble">' + lines[(start + i) % lines.length] + '</span>' +
-              '</div>';
+    if (bubbleSource === 'ai' && aiLines) {
+      for (var i = 0; i < aiLines.length; i++) html += bubbleRow(aiLines[i]);
+    } else {
+      var lines = LINES[state.scene];
+      var start = (state.linesPage * 3) % lines.length;
+      for (var j = 0; j < 3; j++) {
+        html += bubbleRow(lines[(start + j) % lines.length]);
+      }
     }
     $('#bubbles').innerHTML = html;
   }
 
   function openSheet() {
     state.linesPage = 0;
+    bubbleSource = aiLines ? 'ai' : 'preset'; // 有 AI 实时话术先看 AI 的 3 条
     renderBubbles();
     clearTimeout(scrimTimer);
     scrim.hidden = false;
@@ -744,7 +785,12 @@
   scrim.addEventListener('click', closeSheet);
 
   $('#btn-more-lines').addEventListener('click', function () {
-    state.linesPage += 1;
+    if (bubbleSource === 'ai') {
+      bubbleSource = 'preset'; // AI 3 条看完，「换几句」回预设库
+      state.linesPage = 0;
+    } else {
+      state.linesPage += 1;
+    }
     renderBubbles();
   });
 
@@ -872,6 +918,93 @@
   }
 
   updateAnalyzeState();
+
+  /* ---------- v2 · 取景器「分析当前画面」（真实 VLM 场景分析） ---------- */
+  // 统一压缩出口：当前视频帧 → 长边 ≤768 的 JPEG dataURL（全局约束：上传前必须压缩）
+  window.PoseCam = window.PoseCam || {};
+  window.PoseCam.captureFrame = function (maxEdge, quality) {
+    maxEdge = maxEdge || 768;
+    quality = quality || 0.7;
+    return new Promise(function (resolve, reject) {
+      if (!stream || video.readyState < 2 || video.videoWidth === 0) {
+        reject(new Error('相机尚未就绪，请稍候再试'));
+        return;
+      }
+      var w = video.videoWidth;
+      var h = video.videoHeight;
+      var scale = Math.min(1, maxEdge / Math.max(w, h));
+      var cw = Math.max(1, Math.round(w * scale));
+      var ch = Math.max(1, Math.round(h * scale));
+      var shot = document.createElement('canvas');
+      shot.width = cw;
+      shot.height = ch;
+      var ctx = shot.getContext('2d');
+      // 与预览一致：前摄镜像，保证建议里的方向与用户所见一致
+      if (mirrorActive) {
+        ctx.translate(cw, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(video, 0, 0, cw, ch);
+      resolve(shot.toDataURL('image/jpeg', quality));
+    });
+  };
+
+  var analyzing = false;
+  var lastAnalyzeAt = 0;
+  var ANALYZE_COOLDOWN_MS = 30000;
+
+  $('#btn-analyze').addEventListener('click', function () {
+    if (analyzing) return;
+    var now = Date.now();
+    if (now - lastAnalyzeAt < ANALYZE_COOLDOWN_MS) {
+      toast('AI 刚分析过，' + Math.ceil((ANALYZE_COOLDOWN_MS - (now - lastAnalyzeAt)) / 1000) + ' 秒后可再来');
+      return;
+    }
+    if (!hasAI() || !window.PoseCam.AI.isConfigured()) {
+      toast('先在首页⚙配置 AI');
+      return;
+    }
+    if (!window.PoseCam.Prompts) {
+      toast('分析模块加载失败，请刷新页面重试');
+      return;
+    }
+
+    analyzing = true;
+    lastAnalyzeAt = now;
+    var btn = $('#btn-analyze');
+    var note = $('#ai-note');
+    btn.classList.add('loading');
+    note.textContent = 'AI 正在分析画面…';
+    note.classList.remove('warn');
+    note.hidden = false;
+
+    window.PoseCam.captureFrame(768, 0.7)
+      .then(function (dataUrl) {
+        var messages = window.PoseCam.Prompts.buildSceneMessages({
+          sceneLabel: SCENE_LABEL[state.scene],
+          modeLabel: MODE_LABEL[state.mode]
+        });
+        // __IMG__ 占位符 → 真实 base64 图（JSON 序列化后整体替换，再还原对象）
+        var payload = JSON.parse(
+          JSON.stringify(messages).split('"__IMG__"').join(JSON.stringify(dataUrl))
+        );
+        return window.PoseCam.AI.chat({ messages: payload });
+      })
+      .then(function (text) {
+        applySceneAdvice(window.PoseCam.Prompts.parseSceneAdvice(text));
+        toast('AI 分析完成，建议已更新');
+      })
+      .catch(function (err) {
+        console.error('场景分析失败：', err);
+        toast('AI 分析失败：' + ((err && err.message) || err) + '，已保留预设建议');
+        applyAdvice(); // 回退预设库（同时清掉来源标注，预设建议无标注）
+        $('#ai-note').hidden = true;
+      })
+      .finally(function () {
+        analyzing = false;
+        btn.classList.remove('loading');
+      });
+  });
 
   // 标记脚本已完整加载执行（供 index.html 内联兜底脚本检测加载失败）
   window.__poseCamReady = true;
