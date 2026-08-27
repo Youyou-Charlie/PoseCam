@@ -15,7 +15,7 @@
 ## 进度
 - [x] 任务 0：现状核对 + 本文件（无 BLOCKED 项）
 - [x] Task 1：poseSmooth.js + 测试（红→绿，`poseSmooth tests passed`，0 skipped）+ 渲染循环接入（每 2 帧检测 1 次、双人各一平滑器、null 淡出）；规格测试 `a.x` 笔误勘误记 BLOCKED.md B1
-- [ ] Task 2：pwa/js/aiClient.js + 设置面板（index.html/style.css/app.js）
+- [x] Task 2：aiClient.js（三预设+自定义、chat/testConnection、401/429/超时中文映射）+ 设置面板（齿轮/毛玻璃/存取/测试连接）+ 分析按钮未配置置灰；新增 pwa/tests/aiClient.test.js 全绿；Playwright 实测：面板开合/刷新持久化/置灰回灰、控制台 0 错误
 - [ ] Task 3：pwa/js/prompts.js + pwa/tests/prompts.test.js（含坏 JSON 反向验证红→绿）
 - [ ] Task 4：captureFrame + 「分析当前画面」真功能
 - [ ] Task 5：真实照片点评 applyReview

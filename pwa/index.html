@@ -41,6 +41,13 @@
       <button class="btn-pill btn-primary" id="btn-enter">开始拍摄</button>
       <p class="splash-hint">点击任意处进入</p>
     </div>
+    <!-- AI 服务设置入口（右下角齿轮；stopPropagation 不触发进屏） -->
+    <button class="btn-glass-circle settings-gear" id="btn-settings" aria-label="AI 服务设置">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z" stroke="currentColor" stroke-width="1.9"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.1-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.65 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.08A1.7 1.7 0 0 0 10.1 3V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.08a1.7 1.7 0 0 0 1.56 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1.03z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </section>
 
   <!-- ========== 屏 2 · 模式选择 ========== -->
@@ -204,12 +211,17 @@
           AI 摄影师
         </span>
         <span class="ai-scene" id="ai-scene">咖啡厅 · 帮 TA 拍</span>
+        <button class="ai-analyze" id="btn-analyze" disabled title="先在首页⚙配置 AI">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4L12 3z" fill="currentColor"/><path d="M18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9L18 15z" fill="currentColor" opacity=".7"/></svg>
+          <span>分析当前画面</span>
+        </button>
         <button class="ai-refresh" id="btn-next-advice" aria-label="换一条建议">
           <svg viewBox="0 0 24 24" fill="none"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 3.5V8h-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
       <div class="ai-pose" id="ai-pose">侧身靠窗</div>
       <div class="ai-tip" id="ai-tip">让 TA 侧对窗户，脸转向光源，轮廓会更柔和。跟随红色引导线，右臂再抬高一点。</div>
+      <div class="ai-note" id="ai-note">先在首页⚙配置 AI</div>
     </div>
 
     <!-- 话术锦囊入口（暖色唯一入口） -->
@@ -330,6 +342,46 @@
   <!-- 全局 Toast -->
   <div class="toast" id="toast"></div>
 
+  <!-- AI 服务设置（齿轮入口 · 毛玻璃面板；Key 仅存本机 localStorage） -->
+  <div class="settings-mask" id="settings-mask" hidden></div>
+  <div class="settings-sheet" id="settings-sheet" hidden>
+    <div class="sheet-head">
+      <div class="sheet-title-wrap">
+        <span class="sheet-title">AI 服务设置</span>
+        <span class="sheet-sub">Key 仅保存在本机浏览器，不上传仓库</span>
+      </div>
+      <button class="sheet-close" id="btn-settings-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <label class="field">
+      <span class="field-label">服务商</span>
+      <select id="ai-provider">
+        <option value="zhipu">智谱 GLM（免费）</option>
+        <option value="dashscope">阿里百炼（90天免费额度）</option>
+        <option value="moonshot">Moonshot（付费）</option>
+        <option value="custom">自定义（OpenAI 兼容）</option>
+      </select>
+    </label>
+    <label class="field" id="field-baseurl" hidden>
+      <span class="field-label">接口地址 Base URL（到 /v1 为止）</span>
+      <input id="ai-baseurl" type="text" placeholder="https://example.com/v1" autocomplete="off">
+    </label>
+    <label class="field">
+      <span class="field-label">API Key</span>
+      <input id="ai-key" type="password" placeholder="到服务商控制台获取" autocomplete="off">
+    </label>
+    <label class="field">
+      <span class="field-label">模型名（需支持视觉）</span>
+      <input id="ai-model" type="text" placeholder="glm-4.6v-flash" autocomplete="off">
+    </label>
+    <div class="settings-actions">
+      <button class="btn-pill btn-ghost" id="btn-ai-test">测试连接</button>
+      <button class="btn-pill btn-primary" id="btn-ai-save">保存</button>
+    </div>
+    <div class="settings-status" id="ai-status"></div>
+  </div>
+
 </div>
 
 <!-- app.js 加载失败兜底（file:// 或脚本被拦截时给出可读提示，而非死页面） -->
@@ -343,6 +395,7 @@ window.addEventListener('load', function () {
 });
 </script>
 <script src="js/poseSmooth.js"></script>
+<script src="js/aiClient.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

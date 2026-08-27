@@ -758,6 +758,121 @@
     toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
   }
 
+  /* ---------- v2 · AI 服务设置面板（首页齿轮入口） ---------- */
+  var settingsMask = $('#settings-mask');
+  var settingsSheet = $('#settings-sheet');
+  var aiProvider = $('#ai-provider');
+  var aiBaseUrlField = $('#field-baseurl');
+  var aiBaseUrl = $('#ai-baseurl');
+  var aiKey = $('#ai-key');
+  var aiModel = $('#ai-model');
+  var aiStatus = $('#ai-status');
+
+  function hasAI() { return !!(window.PoseCam && window.PoseCam.AI); }
+
+  function setAiStatus(text, cls) {
+    aiStatus.textContent = text || '';
+    aiStatus.className = 'settings-status' + (cls ? ' ' + cls : '');
+  }
+
+  function syncProviderFields() {
+    var isCustom = aiProvider.value === 'custom';
+    aiBaseUrlField.hidden = !isCustom; // 仅自定义服务商需要填 Base URL
+    var preset = !isCustom && hasAI() ? window.PoseCam.AI.PROVIDERS[aiProvider.value] : null;
+    aiModel.placeholder = preset ? preset.model : '如 qwen-vl-plus';
+  }
+
+  function fillSettingsForm() {
+    if (!hasAI()) return;
+    var s = window.PoseCam.AI.loadSettings();
+    aiProvider.value = s.provider;
+    aiBaseUrl.value = s.baseUrl || '';
+    aiKey.value = s.apiKey;
+    aiModel.value = s.model;
+    syncProviderFields();
+  }
+
+  function openSettings() {
+    if (!hasAI()) {
+      toast('设置模块加载失败，请刷新页面重试');
+      return;
+    }
+    fillSettingsForm();
+    setAiStatus('');
+    settingsMask.hidden = false;
+    settingsSheet.hidden = false;
+    requestAnimationFrame(function () {
+      settingsMask.classList.add('show');
+      settingsSheet.classList.add('show');
+    });
+  }
+
+  function closeSettings() {
+    settingsMask.classList.remove('show');
+    settingsSheet.classList.remove('show');
+    setTimeout(function () {
+      settingsMask.hidden = true;
+      settingsSheet.hidden = true;
+    }, 260);
+  }
+
+  $('#btn-settings').addEventListener('click', function (e) {
+    e.stopPropagation(); // 不触发启动页「点击任意处进入」
+    openSettings();
+  });
+
+  $('#btn-settings-close').addEventListener('click', closeSettings);
+  settingsMask.addEventListener('click', closeSettings);
+  aiProvider.addEventListener('change', syncProviderFields);
+
+  function saveSettingsForm() {
+    return window.PoseCam.AI.saveSettings({
+      provider: aiProvider.value,
+      apiKey: aiKey.value,
+      model: aiModel.value,
+      baseUrl: aiBaseUrl.value
+    });
+  }
+
+  $('#btn-ai-save').addEventListener('click', function () {
+    if (!hasAI()) return;
+    saveSettingsForm();
+    var ok = window.PoseCam.AI.isConfigured();
+    setAiStatus(ok ? '已保存 ✓' : '已保存（还差 API Key 或接口地址）', ok ? 'ok' : 'err');
+    updateAnalyzeState();
+  });
+
+  $('#btn-ai-test').addEventListener('click', function () {
+    if (!hasAI()) return;
+    saveSettingsForm(); // 先保存当前表单再测，测的就是所见配置
+    updateAnalyzeState();
+    setAiStatus('正在测试连接…');
+    window.PoseCam.AI.testConnection().then(function () {
+      setAiStatus('连接成功，AI 已就绪 ✓', 'ok');
+    }).catch(function (err) {
+      setAiStatus('连接失败：' + ((err && err.message) || err), 'err');
+    });
+  });
+
+  /* ---------- 取景器「分析」按钮可用性（未配置置灰 + 提示） ---------- */
+  function updateAnalyzeState() {
+    var btn = $('#btn-analyze');
+    var note = $('#ai-note');
+    var configured = hasAI() && window.PoseCam.AI.isConfigured();
+    btn.disabled = !configured;
+    btn.title = configured ? '分析当前画面' : '先在首页⚙配置 AI';
+    if (configured) {
+      note.hidden = true;
+      note.classList.remove('warn');
+    } else {
+      note.textContent = '先在首页⚙配置 AI';
+      note.hidden = false;
+      note.classList.add('warn');
+    }
+  }
+
+  updateAnalyzeState();
+
   // 标记脚本已完整加载执行（供 index.html 内联兜底脚本检测加载失败）
   window.__poseCamReady = true;
 })();
