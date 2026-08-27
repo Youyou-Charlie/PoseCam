@@ -1,7 +1,7 @@
 # 项目工作日志 / Project Work Log
 
 > 用途：记录项目状态、关键决策和下一步，让新会话能快速接上进度。  
-> 更新时间：2026-07-17
+> 更新时间：2026-08-27
 
 ---
 
@@ -34,6 +34,18 @@
 ---
 
 ## 已完成工作
+
+### 2026-08-27
+
+- ✅ **PWA v2 真功能改造完成**（按任务书 `docs/superpowers/plans/2026-07-17-pwa-v2-real-functions.md` 6 任务全部落地，进度/裁决见 `PROGRESS.md`、`BLOCKED.md`）：
+  - T1 骨架降抖：`pwa/js/poseSmooth.js` EMA 平滑（alpha=0.4、低可见度不污染、连续 10 帧未检出淡出）+ 每 2 帧检测 1 次；Node 单测全绿。
+  - T2 VLM 配置：`pwa/js/aiClient.js`（智谱 glm-4.6v-flash/百炼 qwen-vl-plus/Moonshot 三预设 + 自定义 OpenAI 兼容；401/429/超时中文错误映射）+ 首页⚙设置面板；Key 仅存本机 localStorage（`posecam.ai`）。
+  - T3 提示词与容错解析：`pwa/js/prompts.js`（场景分析/照片点评双 prompt，剥围栏、容忍首尾散文、字段/条数/数值越界抛中文错）；Node 单测全绿，坏 JSON 反向验证红→绿。
+  - T4 「分析当前画面」：captureFrame 统一压缩（长边 768/JPEG 0.7）→ VLM → 焦段/AI 面板/锦囊 3 条实时更新，标注「AI 实时分析 · 刚刚」，30 秒冷却；未配置置灰提示。
+  - T5 真实照片点评：快门同一张 blob → VLM → 评分/三星项/鼓励语，标注「AI 点评 · 基于本张照片」；加载不阻塞按钮；未配置/失败回退演示点评并如实标注。
+  - T6 诚实化：「✓ 已暂存 · 点保存写入相册」（grep 验收"已自动保存到相册"零命中）、骨架开关 β 角标 + Toast；README 增「真功能 vs 未实现」清单与 Key 存储说明。
+  - 验证方式：Node 单测（3 套）+ Playwright 真实浏览器（设置面板/持久化/置灰、分析失败回退、假摄像头+桩 VLM 端到端两条 VLM 流程）；**真实 Key 的端到端效果留用户真机验收**（配置入口：首页右下角 ⚙）。
+  - 提交：6c4ca5c / 4159612 / a06a420 / 18ad425 / 9ff55a1 / 0f3d3d8；gitee 全部推送成功，github 网络间歇失败（详见 BLOCKED.md）。
 
 ### 2026-07-17
 
@@ -106,7 +118,8 @@
 5. ✅ **制定可用性测试计划**：`docs/USABILITY_TEST_PLAN.md` 已交付（2026-07-17）。
 6. ✅ **可用性测试第 1 轮（本人场）**：报告见 `docs/USABILITY_REPORT_R1_2026-07-17.md`；第 2 轮陌生人测试由用户决定推迟至 MVP 出来后（届时补测 T3 双人任务与锦囊发现率）。
 7. ✅ **PWA 网页版最小 MVP**：`pwa/` 已交付（2026-07-17）；待用户 iPhone 真机部署实测（开启 GitHub Pages 步骤见 `pwa/README.md`）。
-8. （后续，需 Mac + Xcode）**原生技术脚手架与 MVP 开发**：创建 SwiftUI + ARKit + Vision 项目，按 `docs/MVP_PLAN.md` 的 8 个里程碑推进；需提前规划 Mac 与 Apple 开发者账号（¥688/年）。
+8. ✅ **PWA v2 真功能改造**：已交付（2026-08-27，见上方日志与 `PROGRESS.md`）；待用户配 Key 真机验收 4 条标准（真实场景差异建议 / 点评针对本张照片 / 骨架肉眼不抖 / 断网无 Key 全回退）。
+9. （后续，需 Mac + Xcode）**原生技术脚手架与 MVP 开发**：创建 SwiftUI + ARKit + Vision 项目，按 `docs/MVP_PLAN.md` 的 8 个里程碑推进；需提前规划 Mac 与 Apple 开发者账号（¥688/年）。
 
 ---
 

@@ -1,5 +1,10 @@
 # BLOCKED.md · 待裁决清单（随交付提交）
 
+## B0 · github 推送网络不稳（按拍板处理）
+- 现象：github（https://github.com/Youyou-Charlie/PoseCam.git）推送间歇失败——Task 2 推送曾成功（4159612 上去了），随后连续失败：`Connection timed out after 300s` / `Recv failure: Connection was reset`（累计连败 5 次：Task 4 ×1、Task 5 ×1、Task 6 ×2、收尾 ×1）。
+- 按已拍板执行：以 gitee 为准继续（gitee 全部推送成功，分支 `feature/research-and-prd` 与本地一致）；github 落后 4 个提交（18ad425、9ff55a1、0f3d3d8、收尾提交），网络恢复后补推 `git push github feature/research-and-prd` 即可（无分叉，纯快进）。
+- 注：GitHub Pages 部署依赖 github 仓库，补推前线上 Pages 版本停留在 v2 Task 2 前。
+
 ## B1 · 规格测试代码笔误：`a.x` 应为 `a[0].x`（Task 1）
 - 位置：`docs/superpowers/plans/2026-07-17-pwa-v2-real-functions.md` Task 1 Step 1 测试代码。
 - 问题：`update()` 按接口返回 landmarks **数组**，规格测试却写 `a.x`/`b.x`/`c.x`（数组上取 `.x` 恒为 `undefined`），逐字照抄必然 AssertionError，无法满足「测试全绿」硬指标。

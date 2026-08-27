@@ -20,7 +20,12 @@
 - [x] Task 4：captureFrame（768/0.7 统一压缩出口）+ 分析链路（loading→压缩→__IMG__替换→chat→解析→applySceneAdvice→焦段/AI面板/锦囊3条/note）+ 30s 冷却 + 失败 Toast+回退预设；Playwright 实测：A 失败回退（无相机→Toast「相机尚未就绪…已保留预设建议」，预设未破坏）；B 假摄像头流+桩 VLM 端到端全绿（请求形状/压缩/容错解析/渲染/锦囊 AI 3 条）；真实 Key 场景留用户真机验收（拍板）
 - [x] Task 5：state.lastPhoto + blobToCompressedDataUrl（快门同一张、768/0.7）+ startReviewFlow（加载态不阻塞按钮、token 防竞态）+ applyReview/applyDemoReview（来源标注动态切换）；Playwright 实测：C 成功路径（score=7.5/AI 标注/星级/鼓励语/4KB 压缩）+ D 未配置（演示标注正确、0 请求）；顺带验证了模型加载失败不阻断拍照的降级
 - [x] Task 6：「✓ 已暂存 · 点保存写入相册」（验收 grep "已自动保存到相册" 无命中，连"已自动保存"也零残留）+ 骨架开关 β 角标（珊瑚色）+ 开启 Toast；README 真功能 vs 未实现清单 + key 只存本机说明 + v2 描述刷新 + 单测命令；Playwright 实测 β 角标渲染与文案
-- [ ] 收尾：硬指标 1/2 自检、WORK_LOG.md 更新、BLOCKED.md 定稿、最终提交+双推
+- [x] 收尾：验收全套通过——`node pwa/tests/poseSmooth.test.js`→passed、`node pwa/tests/prompts.test.js`→passed、（附加 `aiClient.test.js`→passed）、`for f in pwa/app.js pwa/js/*.js; do node --check $f || exit 1; done`→ALL_SYNTAX_OK、`grep -rn "已自动保存到相册" pwa/`→无命中；WORK_LOG.md 已更新；github 连败 5 次记 BLOCKED.md B0 以 gitee 为准（gitee 全部同步）
+
+## 最终状态（2026-08-27）
+- 规格 6 任务全部落地并逐任务提交：6c4ca5c(T1) / 4159612(T2) / a06a420(T3) / 18ad425(T4) / 9ff55a1(T5) / 0f3d3d8(T6) + 本收尾提交。
+- gitee 推送全程成功；github 间歇失败（曾成功过 4159612/a06a420），最终连败 5 次，详见 BLOCKED.md B0。
+- 待用户验收（拍板范围外）：真实 Key 真机端到端——①分析建议提到画面真实元素 ②点评针对本张照片 ③骨架肉眼不抖 ④断网/无 Key 全回退。
 
 ## 备注
 - 每完成一项立即更新本文件。
