@@ -18,7 +18,7 @@
 - [x] Task 2：aiClient.js（三预设+自定义、chat/testConnection、401/429/超时中文映射）+ 设置面板（齿轮/毛玻璃/存取/测试连接）+ 分析按钮未配置置灰；新增 pwa/tests/aiClient.test.js 全绿；Playwright 实测：面板开合/刷新持久化/置灰回灰、控制台 0 错误
 - [x] Task 3：prompts.js（场景/点评双提示词 + 围栏剥离 + 首尾散文容忍 + 严格校验抛中文错）+ 测试全绿（红：模块缺失→绿：`prompts tests passed`）；反向验证已贴红（`Error: AI 返回中找不到 JSON 对象（缺少大括号）`）→还原全绿；中途修过 1 处自撰断言正则过窄（截断 JSON 走「找不到 JSON」路径而非「解析失败」），断言意图不变并补 1 用例
 - [x] Task 4：captureFrame（768/0.7 统一压缩出口）+ 分析链路（loading→压缩→__IMG__替换→chat→解析→applySceneAdvice→焦段/AI面板/锦囊3条/note）+ 30s 冷却 + 失败 Toast+回退预设；Playwright 实测：A 失败回退（无相机→Toast「相机尚未就绪…已保留预设建议」，预设未破坏）；B 假摄像头流+桩 VLM 端到端全绿（请求形状/压缩/容错解析/渲染/锦囊 AI 3 条）；真实 Key 场景留用户真机验收（拍板）
-- [ ] Task 5：真实照片点评 applyReview
+- [x] Task 5：state.lastPhoto + blobToCompressedDataUrl（快门同一张、768/0.7）+ startReviewFlow（加载态不阻塞按钮、token 防竞态）+ applyReview/applyDemoReview（来源标注动态切换）；Playwright 实测：C 成功路径（score=7.5/AI 标注/星级/鼓励语/4KB 压缩）+ D 未配置（演示标注正确、0 请求）；顺带验证了模型加载失败不阻断拍照的降级
 - [ ] Task 6：诚实化文案 + README 清单
 - [ ] 收尾：硬指标 1/2 自检、WORK_LOG.md 更新、BLOCKED.md 定稿、最终提交+双推
 

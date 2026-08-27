@@ -686,6 +686,7 @@
         url: URL.createObjectURL(blob),
         name: 'posecam-' + new Date().toISOString().replace(/[:.]/g, '-') + '.jpg'
       };
+      state.lastPhoto = blob; // v2：AI 点评用快门同一张
       flash.classList.remove('on');
       void flash.offsetWidth; // 强制重排，重启动画
       flash.classList.add('on');
@@ -694,6 +695,7 @@
         $('#thumb-mini').style.backgroundImage = 'url(' + currentPhoto.url + ')';
         $('#review-sub').textContent = SCENE_LABEL[state.scene] + ' · ' + MODE_LABEL[state.mode];
         go('screen-review');
+        startReviewFlow();
       }, 360);
     }, 'image/jpeg', 0.92);
   });
@@ -1005,6 +1007,122 @@
         btn.classList.remove('loading');
       });
   });
+
+  /* ---------- v2 · 真实照片点评（快门同一张 blob → 压缩 → VLM → 渲染） ---------- */
+  var DEMO_NOTE_FALLBACK = '演示点评 · AI 未配置或调用失败';
+  var DEMO_REVIEW = {
+    score: '8.6',
+    items: {
+      '构图': { stars: 4, text: '人物落在右侧三分线，头顶留白舒适，构图很稳。' },
+      '姿势': { stars: 3, text: '右臂线条略僵，下次再放松一点会更自然。' },
+      '情绪': { stars: 5, text: '笑容自然有感染力，这张的情绪价值拉满。' }
+    }
+  };
+
+  function starsHtml(stars) {
+    var html = '';
+    for (var i = 1; i <= 5; i++) html += i <= stars ? '★' : '<i>★</i>';
+    return html;
+  }
+
+  function setReviewItems(items) {
+    Object.keys(items).forEach(function (dim) {
+      var el = document.querySelector('.fb-item[data-dim="' + dim + '"]');
+      if (!el) return;
+      el.querySelector('.stars').innerHTML = starsHtml(items[dim].stars);
+      el.querySelector('.fb-text').textContent = items[dim].text;
+      el.classList.remove('pending');
+    });
+  }
+
+  function applyReview(review) {
+    $('#review-score').textContent = String(Math.round(review.score * 10) / 10);
+    var byDim = {};
+    review.items.forEach(function (it) { byDim[it.dim] = it; });
+    setReviewItems(byDim);
+    var note = $('#review-note');
+    note.textContent = 'AI 点评 · 基于本张照片';
+    note.classList.add('ai');
+    note.classList.remove('loading');
+    var enc = $('#review-enc');
+    enc.textContent = review.encouragement;
+    enc.hidden = false;
+  }
+
+  function applyDemoReview(label) {
+    $('#review-score').textContent = DEMO_REVIEW.score;
+    setReviewItems(DEMO_REVIEW.items);
+    var note = $('#review-note');
+    note.textContent = label || DEMO_NOTE_FALLBACK;
+    note.classList.remove('ai');
+    note.classList.remove('loading');
+    $('#review-enc').hidden = true;
+  }
+
+  // 快门 blob → 长边 ≤768 / quality 0.7 的 JPEG dataURL（与取景器分析同一压缩规格）
+  function blobToCompressedDataUrl(blob, maxEdge, quality) {
+    maxEdge = maxEdge || 768;
+    quality = quality || 0.7;
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(blob);
+      var img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var scale = Math.min(1, maxEdge / Math.max(img.naturalWidth, img.naturalHeight));
+        var cw = Math.max(1, Math.round(img.naturalWidth * scale));
+        var ch = Math.max(1, Math.round(img.naturalHeight * scale));
+        var cv = document.createElement('canvas');
+        cv.width = cw;
+        cv.height = ch;
+        cv.getContext('2d').drawImage(img, 0, 0, cw, ch);
+        resolve(cv.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('成片读取失败'));
+      };
+      img.src = url;
+    });
+  }
+
+  var reviewToken = 0; // 防竞态：连拍时只有最新一次点评允许写入 DOM
+  function startReviewFlow() {
+    var token = ++reviewToken;
+    var configured = hasAI() && window.PoseCam.AI && window.PoseCam.AI.isConfigured() && window.PoseCam.Prompts;
+    if (!configured || !state.lastPhoto) {
+      applyDemoReview(DEMO_NOTE_FALLBACK);
+      return;
+    }
+    var note = $('#review-note');
+    note.textContent = 'AI 正在看这张照片…';
+    note.classList.add('loading');
+    note.classList.remove('ai');
+    $('#review-enc').hidden = true;
+    $$('#screen-review .fb-item').forEach(function (el) { el.classList.add('pending'); });
+    // 「再拍一张 / 保存 / 分享」不置灰：AI 永不阻断主流程
+
+    blobToCompressedDataUrl(state.lastPhoto, 768, 0.7)
+      .then(function (dataUrl) {
+        var messages = window.PoseCam.Prompts.buildReviewMessages({
+          sceneLabel: SCENE_LABEL[state.scene],
+          modeLabel: MODE_LABEL[state.mode]
+        });
+        var payload = JSON.parse(
+          JSON.stringify(messages).split('"__IMG__"').join(JSON.stringify(dataUrl))
+        );
+        return window.PoseCam.AI.chat({ messages: payload });
+      })
+      .then(function (text) {
+        if (token !== reviewToken) return; // 已有更新的拍摄，丢弃本次结果
+        applyReview(window.PoseCam.Prompts.parseReview(text));
+      })
+      .catch(function (err) {
+        console.error('AI 点评失败：', err);
+        if (token !== reviewToken) return;
+        toast('AI 点评失败：' + ((err && err.message) || err) + '，已展示演示点评');
+        applyDemoReview(DEMO_NOTE_FALLBACK);
+      });
+  }
 
   // 标记脚本已完整加载执行（供 index.html 内联兜底脚本检测加载失败）
   window.__poseCamReady = true;

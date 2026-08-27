@@ -284,7 +284,7 @@
     <div class="review-photo" id="review-photo">
       <img id="review-img" alt="本次拍摄的成片">
       <div class="score-chip">
-        <span class="score-num">8.6</span>
+        <span class="score-num" id="review-score">8.6</span>
         <span class="score-label">AI 综合评分</span>
       </div>
       <div class="saved-chip">
@@ -300,11 +300,11 @@
       </button>
     </div>
 
-    <!-- 诚实标注：点评为预设演示文案 -->
-    <div class="demo-note">演示点评 · 真实分析为后续版本</div>
+    <!-- 来源标注：按点评来源动态切换（AI 点评 / 演示点评） -->
+    <div class="demo-note" id="review-note">演示点评 · 非本张照片分析</div>
 
     <div class="fb-list">
-      <div class="fb-item">
+      <div class="fb-item" data-dim="构图">
         <span class="fb-icon">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="#00D4AA" stroke-width="2" stroke-linejoin="round"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16" stroke="#00D4AA" stroke-width="1.4"/></svg>
         </span>
@@ -313,7 +313,7 @@
           <span class="fb-text">人物落在右侧三分线，头顶留白舒适，构图很稳。</span>
         </span>
       </div>
-      <div class="fb-item">
+      <div class="fb-item" data-dim="姿势">
         <span class="fb-icon">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="6.5" r="3" stroke="#00D4AA" stroke-width="2"/><path d="M5.5 20c.8-4.5 3.2-6.5 6.5-6.5s5.7 2 6.5 6.5" stroke="#00D4AA" stroke-width="2" stroke-linecap="round"/></svg>
         </span>
@@ -322,7 +322,7 @@
           <span class="fb-text">右臂线条略僵，下次再放松一点会更自然。</span>
         </span>
       </div>
-      <div class="fb-item">
+      <div class="fb-item" data-dim="情绪">
         <span class="fb-icon">
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.3-7-9.5C5 7.5 7 6 9 6c1.3 0 2.4.7 3 1.7C12.6 6.7 13.7 6 15 6c2 0 4 1.5 4 4.5 0 5.2-7 9.5-7 9.5z" stroke="#00D4AA" stroke-width="2" stroke-linejoin="round"/></svg>
         </span>
@@ -332,6 +332,8 @@
         </span>
       </div>
     </div>
+
+    <div class="review-enc" id="review-enc" hidden></div>
 
     <div class="page-foot foot-row">
       <button class="btn-pill btn-primary" data-go="screen-viewfinder">再拍一张</button>
