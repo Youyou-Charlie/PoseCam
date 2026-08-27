@@ -56,6 +56,8 @@
 - ✅ 用户决定：第 2 轮陌生人可用性测试推迟，待最小 MVP 出来后再做；当前优先推进 MVP。
 - ✅ 用户拍板 PWA 网页版先行（原生 iOS 路线不变）。交付 `pwa/` 最小 MVP：真摄像头 + 实时骨架（移动端 lite 模型、GPU→CPU 回退）、5 屏流程沿用冻结视觉、快门拍真实照片、点评页显示真实成片（演示点评已标注）、系统分享/保存、PWA 可安装（manifest + 图标 + apple 元数据）。设计稿：`docs/superpowers/specs/2026-07-17-pwa-mvp-design.md`；部署见 `pwa/README.md`（GitHub Pages）。
 - ✅ GitHub Pages 上线（仓库已转公开）：**https://Youyou-Charlie.github.io/PoseCam/pwa/** ，根目录加 `.nojekyll` 跳过 Jekyll；之后每次推送 GitHub 自动重新部署。
+- ⚠️ PWA v1 真机实测暴露根本问题（用户反馈）：浏览器 WASM 骨架在 iPhone 上抖动严重、除骨架外功能均为预设文案，无实用性。教训：①骨架跟随≠姿势指导；②桌面验证外推 iPhone 浏览器栈是错误推理，实时纠偏属原生主场。
+- ✅ 按第一性原理重建规划（用户要求）：任务书 `docs/superpowers/plans/2026-07-17-pwa-v2-real-functions.md`——摄影师四件事「看场景/出方案/引导执行/判断成片」中，VLM 能真做的三件事在 PWA 落地（真实场景分析、真实照片点评），实时姿势纠偏明确划归原生阶段；骨架 EMA 平滑+节流降抖；服务商配置内置智谱 glm-4.6v-flash（免费）/百炼 qwen-vl-plus/Moonshot 三预设；诚实化整改剔除摆设。
 
 ### 2026-06-25
 
