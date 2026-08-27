@@ -134,6 +134,11 @@
   var detectErrors = 0;    // 连续检测异常计数（瞬时错误不中断，持续异常才停）
   var currentPhoto = null;   // { blob, url, name } 本次成片
   var lastTagState = '';     // 姿势标签 DOM 更新去抖
+  var frameCount = 0;        // 检测节流：每 2 帧做 1 次推理（v2 降抖）
+  var poseSmoothers = (window.PoseCam && window.PoseCam.createPoseSmoother)
+    ? [window.PoseCam.createPoseSmoother(), window.PoseCam.createPoseSmoother()] // numPoses=2，每人一个
+    : null; // 平滑模块缺失时退回直渲染，不阻断
+  var lastSmoothedPoses = []; // smoother 当前值缓存，未检测帧渲染用
 
   /* ---------- 屏幕切换（淡入） ---------- */
   function show(id) {
@@ -448,6 +453,9 @@
     lastVideoTime = -1;
     lastTimestamp = -1;
     detectErrors = 0;
+    frameCount = 0;
+    lastSmoothedPoses = [];
+    if (poseSmoothers) poseSmoothers.forEach(function (sm) { sm.reset(); });
   }
 
   function clearOverlay() {
@@ -464,20 +472,33 @@
     }
   });
 
-  /* ---------- 检测循环（沿用 pose-demo：跳重复帧 + 时间戳严格单调） ---------- */
+  /* ---------- 检测循环（沿用 pose-demo：跳重复帧 + 时间戳严格单调；v2：每 2 帧推理 1 次 + EMA 平滑） ---------- */
   function detectLoop() {
     if (!detecting) return;
     try {
       if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
         lastVideoTime = video.currentTime;
+        frameCount += 1;
 
-        var timestamp = performance.now();
-        if (timestamp <= lastTimestamp) timestamp = lastTimestamp + 1;
-        lastTimestamp = timestamp;
+        if (frameCount % 2 === 1) { // 检测帧：跑推理并喂给平滑器
+          var timestamp = performance.now();
+          if (timestamp <= lastTimestamp) timestamp = lastTimestamp + 1;
+          lastTimestamp = timestamp;
 
-        var result = poseLandmarker.detectForVideo(video, timestamp);
-        detectErrors = 0;
-        render(result);
+          var result = poseLandmarker.detectForVideo(video, timestamp);
+          detectErrors = 0;
+          var raw = result.landmarks || [];
+          if (poseSmoothers) {
+            // 每人一个平滑器；未检出的那一侧喂 null（连续 10 帧后骨架淡出）
+            lastSmoothedPoses = poseSmoothers
+              .map(function (sm, i) { return sm.update(raw[i] || null); })
+              .filter(Boolean);
+          } else {
+            lastSmoothedPoses = raw;
+          }
+        }
+        // 未检测帧：复用 smoother 当前值渲染（骨架不逐帧跳变 → 降抖）
+        renderPoses(lastSmoothedPoses);
       }
     } catch (err) {
       console.error(err);
@@ -491,8 +512,9 @@
     requestAnimationFrame(detectLoop);
   }
 
-  /* ---------- 骨架渲染（青色 #00D4AA，DrawingUtils） ---------- */
-  function render(result) {
+  /* ---------- 骨架渲染（青色 #00D4AA，DrawingUtils；输入为平滑后 poses） ---------- */
+  function renderPoses(poses) {
+    poses = poses || [];
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!state.arOn) {
@@ -502,7 +524,6 @@
     // drawingUtils 惰性创建：openStream 时模型可能尚在加载（两者并行），
     // 这里保证首次渲染前一定就绪
     if (!drawingUtils) drawingUtils = new DrawingUtilsRef(ctx);
-    var poses = result.landmarks || [];
     for (var i = 0; i < poses.length; i++) {
       drawingUtils.drawConnectors(poses[i], PoseLandmarkerRef.POSE_CONNECTIONS, {
         color: '#00D4AA',
