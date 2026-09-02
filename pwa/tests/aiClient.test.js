@@ -20,11 +20,7 @@ assert.strictEqual(AI.PROVIDERS.zhipu.baseUrl, "https://open.bigmodel.cn/api/paa
 assert.strictEqual(AI.PROVIDERS.dashscope.model, "qwen-vl-plus");
 assert.strictEqual(AI.PROVIDERS.moonshot.model, "moonshot-v1-8k-vision-preview");
 
-// 内置 Key（2026-07-17 起智谱默认内置，用户自填优先）：空存储回退内置 Key → isConfigured=true
-assert.strictEqual(AI.isConfigured(), true, "智谱内置 Key 应使空存储视为已配置");
-assert.ok(AI.loadSettings().apiKey.length > 0, "空存储应回退到内置 Key");
-// 无内置兜底的服务商未配置：isConfigured=false，chat 拒绝并给中文原因（回退路径入口）
-AI.saveSettings({ provider: "dashscope", apiKey: "" });
+// 未配置：isConfigured=false，chat 拒绝并给中文原因（回退路径入口）
 assert.strictEqual(AI.isConfigured(), false);
 AI.chat({ messages: [] }).then(
   () => { throw new Error("未配置时 chat 应该拒绝"); },

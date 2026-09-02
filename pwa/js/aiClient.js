@@ -16,11 +16,6 @@
   var STORAGE_KEY = 'posecam.ai';
   var DEFAULT_TIMEOUT_MS = 20000;
 
-  // 内置默认 Key（智谱 glm-4.6v-flash 免费模型，供自用 MVP 开箱即用）：
-  // 注意仓库已公开，此 Key 对任何人可见；滥用风险=免费额度被刷，可随时去智谱控制台吊销重生成。
-  // 用户在设置页自填的 Key 优先于此内置值。
-  var BUILTIN_ZHIPU_KEY = '96d2159f98f7494283c0e6fb75e5345b.PQe1ClYwSFuYxk3Y';
-
   var PROVIDERS = {
     zhipu: {
       label: '智谱 GLM（免费）',
@@ -54,7 +49,7 @@
     var preset = PROVIDERS[provider];
     return {
       provider: provider,
-      apiKey: s.apiKey || (provider === 'zhipu' ? BUILTIN_ZHIPU_KEY : ''),
+      apiKey: s.apiKey || '',
       model: s.model || (preset ? preset.model : ''),
       baseUrl: s.baseUrl || ''
     };
