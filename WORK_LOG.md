@@ -70,6 +70,7 @@
 - ✅ GitHub Pages 上线（仓库已转公开）：**https://Youyou-Charlie.github.io/PoseCam/pwa/** ，根目录加 `.nojekyll` 跳过 Jekyll；之后每次推送 GitHub 自动重新部署。
 - ⚠️ PWA v1 真机实测暴露根本问题（用户反馈）：浏览器 WASM 骨架在 iPhone 上抖动严重、除骨架外功能均为预设文案，无实用性。教训：①骨架跟随≠姿势指导；②桌面验证外推 iPhone 浏览器栈是错误推理，实时纠偏属原生主场。
 - ✅ 按第一性原理重建规划（用户要求）：任务书 `docs/superpowers/plans/2026-07-17-pwa-v2-real-functions.md`——摄影师四件事「看场景/出方案/引导执行/判断成片」中，VLM 能真做的三件事在 PWA 落地（真实场景分析、真实照片点评），实时姿势纠偏明确划归原生阶段；骨架 EMA 平滑+节流降抖；服务商配置内置智谱 glm-4.6v-flash（免费）/百炼 qwen-vl-plus/Moonshot 三预设；诚实化整改剔除摆设。
+- ✅ 智谱 API Key 实测有效（认证通过；免费模型当时返回 1305 拥堵，稍后重试即可），应用户要求内置为默认 Key（仓库公开的风险已告知；用户自填覆盖、仅存本机）；aiClient 补充 HTTP 200 错误体识别（1305 实测暴露）；README/测试同步更新。
 
 ### 2026-06-25
 

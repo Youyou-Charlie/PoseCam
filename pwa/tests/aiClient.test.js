@@ -20,7 +20,11 @@ assert.strictEqual(AI.PROVIDERS.zhipu.baseUrl, "https://open.bigmodel.cn/api/paa
 assert.strictEqual(AI.PROVIDERS.dashscope.model, "qwen-vl-plus");
 assert.strictEqual(AI.PROVIDERS.moonshot.model, "moonshot-v1-8k-vision-preview");
 
-// 未配置：isConfigured=false，chat 拒绝并给中文原因（回退路径入口）
+// 内置 Key（2026-07-17 起智谱默认内置，用户自填优先）：空存储回退内置 Key → isConfigured=true
+assert.strictEqual(AI.isConfigured(), true, "智谱内置 Key 应使空存储视为已配置");
+assert.ok(AI.loadSettings().apiKey.length > 0, "空存储应回退到内置 Key");
+// 无内置兜底的服务商未配置：isConfigured=false，chat 拒绝并给中文原因（回退路径入口）
+AI.saveSettings({ provider: "dashscope", apiKey: "" });
 assert.strictEqual(AI.isConfigured(), false);
 AI.chat({ messages: [] }).then(
   () => { throw new Error("未配置时 chat 应该拒绝"); },
@@ -96,6 +100,16 @@ AI.chat({ messages: [] }).then(
       return AI.chat({ messages: [] }).then(
         () => { throw new Error("空 choices 应该拒绝"); },
         (err) => assert.ok(/为空/.test(err.message), "空返回应报中文错误，实际：" + err.message)
+      );
+    }).then(() => {
+      // HTTP 200 但带错误体（智谱 1305 模型拥堵实测）→ 抛错并透传服务商中文消息
+      globalThis.fetch = () => Promise.resolve({
+        ok: true, status: 200,
+        json: () => Promise.resolve({ error: { code: "1305", message: "该模型当前访问量过大" } })
+      });
+      return AI.chat({ messages: [] }).then(
+        () => { throw new Error("错误体应该被拒绝"); },
+        (err) => assert.ok(/访问量过大/.test(err.message), "错误体消息应透传，实际：" + err.message)
       );
     }).then(() => {
       globalThis.fetch = realFetch;
